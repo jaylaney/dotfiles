@@ -19,3 +19,5 @@ function parse_gb {
 PS1="\W \[\033[01;33m\]\$(parse_gb)\[\033[00;37m\]$ "
 
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
