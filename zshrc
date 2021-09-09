@@ -95,8 +95,6 @@ source $ZSH/oh-my-zsh.sh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+alias start_postgres="/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres"
 
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
