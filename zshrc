@@ -9,7 +9,7 @@ export ZSH="/Users/jay/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="spaceship"
+ZSH_THEME=random
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -98,3 +98,15 @@ source $ZSH/oh-my-zsh.sh
 alias start_postgres="/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres"
 
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+export PATH="$HOME/.docker/bin:/opt/homebrew/lib/ruby/gems/3.4.0/bin:/opt/homebrew/opt/ruby/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/ruby/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/jay/.lmstudio/bin"
+# End of LM Studio CLI section
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/jay/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
