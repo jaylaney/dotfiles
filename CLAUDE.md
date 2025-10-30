@@ -109,10 +109,17 @@ Use the `install.sh` script for non-destructive symlinking:
 - Files in root of dotfiles/ are prefixed with a dot (e.g., `dotfiles/zshrc` → `~/.zshrc`)
 - Files in subdirectories maintain structure (e.g., `dotfiles/config/nvim/init.lua` → `~/.config/nvim/init.lua`)
 - Automatically creates necessary parent directories
-- Skips files that already exist (won't overwrite)
-- Skips symlinks that already point to the correct location
-- Warns about symlinks pointing elsewhere
+- Symlinks already pointing to the correct location are left as-is
 - Auto-skips: `.git`, `.DS_Store`, `README.md`, `CLAUDE.md`, `install.sh`
+
+**Interactive conflict resolution:**
+When a file/symlink conflict is detected (not in --dry-run mode), you'll be prompted with:
+- **[s]kip** - Leave the existing file/symlink as-is and continue
+- **[d]iff** - Show unified diff between existing and new file, then re-prompt
+- **[o]verwrite** - Backup existing file (with timestamp) and create new symlink
+- **[q]uit** - Exit the installation immediately
+
+Backups are created with format: `filename.backup.YYYYMMDD_HHMMSS`
 
 ## Notes
 

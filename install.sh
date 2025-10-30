@@ -36,6 +36,101 @@ NC='\033[0m' # No Color
 # Files and directories to skip
 SKIP_FILES=(".git" ".DS_Store" "README.md" "CLAUDE.md" "install.sh")
 
+# Show diff between two files
+show_diff() {
+    local source="$1"
+    local target="$2"
+
+    echo ""
+    echo -e "${BLUE}=== Diff: $target (current) vs $source (new) ===${NC}"
+
+    # If target is a symlink, resolve it first
+    if [[ -L "$target" ]]; then
+        local resolved_target="$(readlink "$target")"
+        if [[ -f "$resolved_target" ]]; then
+            diff -u "$resolved_target" "$source" || true
+        else
+            echo -e "${YELLOW}Cannot diff: symlink points to non-existent file${NC}"
+        fi
+    elif [[ -f "$target" ]]; then
+        diff -u "$target" "$source" || true
+    else
+        echo -e "${YELLOW}Cannot diff: target is not a regular file${NC}"
+    fi
+    echo -e "${BLUE}=== End of diff ===${NC}"
+    echo ""
+}
+
+# Backup and overwrite a file/symlink
+backup_and_overwrite() {
+    local source="$1"
+    local target="$2"
+    local timestamp="$(date +%Y%m%d_%H%M%S)"
+    local backup="$target.backup.$timestamp"
+
+    echo -e "${YELLOW}Creating backup: $backup${NC}"
+
+    # Move existing file/symlink to backup
+    mv "$target" "$backup"
+
+    # Create new symlink
+    echo -e "${GREEN}→ Symlinking: $target -> $source${NC}"
+    ln -s "$source" "$target"
+
+    return 0
+}
+
+# Interactive prompt for conflict resolution
+prompt_conflict_resolution() {
+    local source="$1"
+    local target="$2"
+    local conflict_type="$3"  # "file" or "symlink"
+
+    while true; do
+        echo ""
+        if [[ "$conflict_type" == "symlink" ]]; then
+            local current_source="$(readlink "$target")"
+            echo -e "${YELLOW}⚠ Conflict: Symlink points to different location${NC}"
+            echo -e "  Target: $target"
+            echo -e "  Currently points to: $current_source"
+            echo -e "  Should point to: $source"
+        else
+            echo -e "${YELLOW}⚠ Conflict: File already exists${NC}"
+            echo -e "  Target: $target"
+            echo -e "  New source: $source"
+        fi
+
+        echo ""
+        echo -e "Options: ${GREEN}[s]${NC}kip  ${BLUE}[d]${NC}iff  ${RED}[o]${NC}verwrite  ${YELLOW}[q]${NC}uit"
+        read -p "Choice: " -n 1 -r choice
+        echo ""
+
+        case $choice in
+            s|S)
+                echo -e "${YELLOW}Skipping: $target${NC}"
+                return 1
+                ;;
+            d|D)
+                show_diff "$source" "$target"
+                # Re-prompt after showing diff
+                continue
+                ;;
+            o|O)
+                backup_and_overwrite "$source" "$target"
+                return 0
+                ;;
+            q|Q)
+                echo -e "${RED}Installation cancelled by user${NC}"
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}Invalid choice. Please try again.${NC}"
+                continue
+                ;;
+        esac
+    done
+}
+
 should_skip() {
     local file="$1"
     for skip in "${SKIP_FILES[@]}"; do
@@ -79,16 +174,27 @@ symlink_file() {
                 echo -e "${GREEN}✓ Already linked: $target${NC}"
                 return 0
             else
-                echo -e "${YELLOW}⚠ Symlink exists but points elsewhere:${NC}"
-                echo -e "  Target: $target"
-                echo -e "  Points to: $current_source"
-                echo -e "  Expected: $source"
-                return 1
+                # Symlink points elsewhere - handle conflict
+                if [[ "$DRY_RUN" == true ]]; then
+                    echo -e "${YELLOW}[DRY RUN] Symlink conflict detected:${NC}"
+                    echo -e "  Target: $target"
+                    echo -e "  Points to: $current_source"
+                    echo -e "  Expected: $source"
+                    return 1
+                else
+                    prompt_conflict_resolution "$source" "$target" "symlink"
+                    return $?
+                fi
             fi
         else
-            # It's a regular file or directory
-            echo -e "${RED}✗ File already exists (not a symlink): $target${NC}"
-            return 1
+            # It's a regular file or directory - handle conflict
+            if [[ "$DRY_RUN" == true ]]; then
+                echo -e "${RED}[DRY RUN] File conflict detected: $target${NC}"
+                return 1
+            else
+                prompt_conflict_resolution "$source" "$target" "file"
+                return $?
+            fi
         fi
     else
         # Create the symlink
