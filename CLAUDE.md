@@ -6,6 +6,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (bash/zsh), Neovim setup, and terminal (Ghostty) settings.
 
+**Repository Structure:**
+```
+/
+├── dotfiles/           # Actual configuration files
+│   ├── bash_profile
+│   ├── bashrc
+│   ├── profile
+│   ├── zshrc
+│   ├── zprofile
+│   ├── vimrc
+│   ├── gvimrc
+│   └── config/        # Application configs (nvim, ghostty)
+├── install.sh         # Installation script
+├── CLAUDE.md          # This documentation
+├── README.md          # Repository readme
+└── .gitignore         # Git ignore rules
+```
+
 ## Architecture
 
 ### Shell Configuration
@@ -31,7 +49,7 @@ This is a personal dotfiles repository for macOS development environment configu
 
 - **zprofile**: Minimal, primarily handles Homebrew shellenv initialization
 
-### Neovim Configuration (`config/nvim/`)
+### Neovim Configuration (`dotfiles/config/nvim/`)
 - **Plugin Manager**: lazy.nvim (auto-bootstrapping from init.lua)
 - **Leader Key**: Space (`<leader>` = ` `)
 - **Local Leader**: Backslash (`<localleader>` = `\`)
@@ -55,7 +73,7 @@ This is a personal dotfiles repository for macOS development environment configu
   - UTF-8 encoding
 
 ### Terminal Configuration
-- **Ghostty** terminal emulator configured at `config/ghostty/config`
+- **Ghostty** terminal emulator configured at `dotfiles/config/ghostty/config`
 - Option key mapped as Alt key for better keybinding support
 
 ## Key Environment Variables & Paths
@@ -87,8 +105,9 @@ Use the `install.sh` script for non-destructive symlinking:
 ```
 
 **How it works:**
-- Files in root directory are prefixed with a dot (e.g., `zshrc` → `~/.zshrc`)
-- Files in subdirectories maintain structure (e.g., `config/nvim/init.lua` → `~/.config/nvim/init.lua`)
+- Reads configuration files from the `dotfiles/` subdirectory
+- Files in root of dotfiles/ are prefixed with a dot (e.g., `dotfiles/zshrc` → `~/.zshrc`)
+- Files in subdirectories maintain structure (e.g., `dotfiles/config/nvim/init.lua` → `~/.config/nvim/init.lua`)
 - Automatically creates necessary parent directories
 - Skips files that already exist (won't overwrite)
 - Skips symlinks that already point to the correct location

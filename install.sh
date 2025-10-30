@@ -7,7 +7,8 @@
 
 set -e
 
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$REPO_DIR/dotfiles"
 DRY_RUN=false
 TARGET_DIR="$HOME"
 
