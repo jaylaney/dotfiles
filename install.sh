@@ -269,7 +269,8 @@ process_file() {
         target="$TARGET_DIR/.$rel_path"
     fi
 
-    symlink_file "$source" "$target"
+    # Continue processing even if symlink_file returns non-zero (conflict/skip)
+    symlink_file "$source" "$target" || true
 }
 
 # Main processing
