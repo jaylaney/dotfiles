@@ -98,7 +98,9 @@ This is a personal dotfiles repository for macOS development environment configu
 Use the `install.sh` script for non-destructive symlinking:
 
 ```bash
-./install.sh                    # Install to $HOME (default)
+./install.sh                    # Show help (no arguments)
+./install.sh --help             # Show help message
+./install.sh $HOME              # Install to $HOME with interactive prompts
 ./install.sh /path              # Install to custom directory
 ./install.sh --dry-run          # Preview changes without making them
 ./install.sh --dry-run /path    # Dry run to custom directory

@@ -12,9 +12,57 @@ DOTFILES_DIR="$REPO_DIR/dotfiles"
 DRY_RUN=false
 TARGET_DIR="$HOME"
 
+# Show help message
+show_help() {
+    cat << EOF
+Dotfiles Installation Script
+
+USAGE:
+    ./install.sh [OPTIONS] [TARGET_DIR]
+
+DESCRIPTION:
+    Symlinks dotfiles from the dotfiles/ directory into TARGET_DIR (default: \$HOME).
+    Files in the root of dotfiles/ are prefixed with a dot (e.g., zshrc -> ~/.zshrc).
+    Files in subdirectories maintain their structure (e.g., config/nvim/init.lua -> ~/.config/nvim/init.lua).
+
+OPTIONS:
+    --dry-run           Preview changes without making them (no prompts)
+    -h, --help          Show this help message
+
+ARGUMENTS:
+    TARGET_DIR          Target directory for symlinks (default: \$HOME)
+
+INTERACTIVE MODE:
+    When conflicts are detected (file exists or symlink points elsewhere), you'll be prompted:
+
+    [s]kip       - Leave existing file/symlink as-is and continue
+    [d]iff       - Show differences between existing and new file, then re-prompt
+    [o]verwrite  - Backup existing file (with timestamp) and create new symlink
+    [q]uit       - Exit installation immediately
+
+EXAMPLES:
+    ./install.sh                    # Install to \$HOME with interactive prompts
+    ./install.sh --dry-run          # Preview what would be installed
+    ./install.sh /path/to/target    # Install to custom directory
+    ./install.sh --dry-run ~/test   # Preview install to ~/test
+
+BACKUPS:
+    When overwriting, backups are created with format: filename.backup.YYYYMMDD_HHMMSS
+
+EOF
+    exit 0
+}
+
 # Parse arguments
+if [ $# -eq 0 ]; then
+    show_help
+fi
+
 for arg in "$@"; do
     case $arg in
+        -h|--help)
+            show_help
+            ;;
         --dry-run)
             DRY_RUN=true
             shift
