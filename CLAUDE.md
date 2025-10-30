@@ -74,6 +74,5 @@ Use the `install.sh` script for non-destructive symlinking:
 
 ## Notes
 
-- The repository has untracked `config/` directory and `.DS_Store` file
-- Recent changes involve Homebrew path updates and rbenv configuration
-- PostgreSQL is installed via Homebrew and requires manual starting
+- `.DS_Store` files are gitignored
+- PostgreSQL is installed via Homebrew and requires manual starting (use `start_postgres` alias)
