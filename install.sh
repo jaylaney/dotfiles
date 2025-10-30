@@ -150,7 +150,10 @@ prompt_conflict_resolution() {
 
         echo ""
         echo -e "Options: ${GREEN}[s]${NC}kip  ${BLUE}[d]${NC}iff  ${RED}[o]${NC}verwrite  ${YELLOW}[q]${NC}uit"
-        read -p "Choice: " -n 1 -r choice
+        # Read from FD 3 (terminal) not from stdin which is hijacked by the find loop
+        read -p "Choice: " -r choice_input <&3
+        # Take first character of input
+        choice="${choice_input:0:1}"
         echo ""
 
         case $choice in
@@ -280,6 +283,10 @@ if [[ "$DRY_RUN" == true ]]; then
     echo -e "${BLUE}Mode: DRY RUN (no changes will be made)${NC}"
 fi
 echo ""
+
+# Open /dev/tty on file descriptor 3 for reading user input during the loop
+# This prevents the while-read loop from hijacking stdin
+exec 3</dev/tty 2>/dev/null || exec 3<&0
 
 # Process all files recursively
 while IFS= read -r -d '' file; do
