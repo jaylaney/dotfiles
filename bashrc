@@ -1,0 +1,11 @@
+
+# commented out in favor of rbenv
+#export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+export JAVA_HOME=`/usr/libexec/java_home -v 1.7
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/jay/.lmstudio/bin"
+# End of LM Studio CLI section
+

@@ -17,9 +17,17 @@ This is a personal dotfiles repository for macOS development environment configu
   - Custom PATH includes: Ruby gems, Docker, LM Studio CLI
   - PostgreSQL alias: `start_postgres` command available
 
-- **bash_profile**: Legacy bash configuration (kept for compatibility)
-  - Similar aliases and PATH configurations
-  - Volta (JavaScript toolchain) integration
+- **bash_profile**: Bash login shell configuration
+  - JAVA_HOME setup, git aliases, Rails helpers
+  - rbenv initialization
+  - Volta integration
+
+- **bashrc**: Bash runtime configuration
+  - Java 1.7 configuration
+  - Volta and LM Studio PATH additions
+
+- **profile**: Generic shell profile (fallback for POSIX-compliant shells)
+  - Volta and LM Studio PATH configuration
 
 - **zprofile**: Minimal, primarily handles Homebrew shellenv initialization
 
@@ -30,6 +38,21 @@ This is a personal dotfiles repository for macOS development environment configu
 - **Plugin Structure**: Modular - plugins defined in `lua/plugins/*.lua`
 - **Key Plugin**: nvim-tree (file explorer with `<C-h/j/k/l>` and `<A-h/j/k/l>` window navigation)
 - netrw is disabled in favor of nvim-tree
+
+### Vim Configuration
+- **vimrc**: Classic Vim configuration
+  - Leader key: `,` (comma)
+  - Pathogen plugin manager
+  - Molokai colorscheme
+  - 2-space indentation
+  - Tab mappings, FuzzyFinder, Ack integration
+  - Window navigation with `<C-h>` and `<C-l>`
+
+- **gvimrc**: GUI Vim (MacVim) settings
+  - Font: Menlo 14pt
+  - Dark background
+  - No toolbar/scrollbar
+  - UTF-8 encoding
 
 ### Terminal Configuration
 - **Ghostty** terminal emulator configured at `config/ghostty/config`
