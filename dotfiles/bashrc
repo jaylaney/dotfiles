@@ -9,3 +9,4 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 export PATH="$PATH:/Users/jay/.lmstudio/bin"
 # End of LM Studio CLI section
 
+. "$HOME/.cargo/env"
