@@ -1,2 +1,3 @@
 macos-option-as-alt = true
 term = xterm-256color
+keybind = shift+enter=text:\x1b\r
