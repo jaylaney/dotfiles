@@ -116,4 +116,6 @@ compinit
 
 export COLORTERM=truecolor
 
+bindkey -e  # Use emacs key bindings (includes Ctrl-R for history search)
+
 eval "$(starship init zsh)"
