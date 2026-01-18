@@ -10,7 +10,6 @@ alias glogme='git log --name-status --author=$USER'
 alias ptl="tail -f log/development.log"
 alias sc='script/console'
 
-# alias jssh='ssh -At jumphost.dm2.yammer.com ssh -A $@'
 alias psx="ps auxw | grep $1"
 
 function parse_gb {
