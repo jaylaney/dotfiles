@@ -22,7 +22,7 @@ Personal macOS development environment configuration files with an interactive i
 
 ```bash
 # Clone the repository
-git clone <your-repo-url> ~/Development/dotfiles
+git clone https://github.com/jaylaney/dotfiles.git ~/Development/dotfiles
 cd ~/Development/dotfiles
 
 # Preview what would be installed (recommended first step)
@@ -76,6 +76,9 @@ The installation script:
 │   ├── zprofile
 │   ├── vimrc
 │   ├── gvimrc
+│   ├── tmux.conf
+│   ├── claude/        # Claude Code custom commands
+│   │   └── commands/
 │   └── config/        # Application configs (nvim, ghostty)
 ├── install.sh         # Installation script
 ├── CLAUDE.md          # Developer documentation

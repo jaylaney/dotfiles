@@ -17,6 +17,9 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── zprofile
 │   ├── vimrc
 │   ├── gvimrc
+│   ├── tmux.conf
+│   ├── claude/        # Claude Code custom commands
+│   │   └── commands/
 │   └── config/        # Application configs (nvim, ghostty)
 ├── install.sh         # Installation script
 ├── CLAUDE.md          # This documentation
