@@ -1,3 +1,4 @@
+theme = light:iTerm2 Light Background,dark:Ghostty Default Style Dark
 macos-option-as-alt = true
 term = xterm-256color
 keybind = shift+enter=text:\x1b\r
