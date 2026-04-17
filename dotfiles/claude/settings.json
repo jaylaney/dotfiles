@@ -1,0 +1,11 @@
+{
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "statusLine": {
+    "type": "command",
+    "command": "sh /Users/jay/.claude/statusline-command.sh"
+  }
+}
