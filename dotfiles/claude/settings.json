@@ -13,8 +13,8 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
-  "statusLine": {
-    "type": "command",
-    "command": "sh $HOME/.claude/statusline-command.sh"
+  "skipAutoPermissionPrompt": true,
+  "permissions": {
+    "defaultMode": "auto"
   }
 }
