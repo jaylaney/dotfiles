@@ -100,10 +100,19 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 #
 alias start_postgres="/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres"
 
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-export PATH="$HOME/.docker/bin:/opt/homebrew/lib/ruby/gems/3.4.0/bin:/opt/homebrew/opt/ruby/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/ruby/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
+export PATH="$HOME/.docker/bin:$PATH"
+
+# Prefer Homebrew Ruby over the macOS system Ruby when it's installed.
+# Ruby is keg-only, so Homebrew won't put it on the PATH automatically.
+if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
+  export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+  # Add gem-installed binaries; glob the version dir so it survives Ruby upgrades.
+  for gem_bin in /opt/homebrew/lib/ruby/gems/*/bin(N); do
+    export PATH="$gem_bin:$PATH"
+  done
+  export LDFLAGS="-L/opt/homebrew/opt/ruby/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
+fi
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/jay/.lmstudio/bin"
