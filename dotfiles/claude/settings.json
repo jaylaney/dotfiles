@@ -1,7 +1,10 @@
 {
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
   "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
@@ -12,9 +15,8 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
-  "skipAutoPermissionPrompt": true,
-  "permissions": {
-    "defaultMode": "auto"
-  }
+  "theme": "auto",
+  "preferredNotifChannel": "terminal_bell",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
