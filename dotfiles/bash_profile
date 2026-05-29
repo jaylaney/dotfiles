@@ -1,7 +1,18 @@
 export DISPLAY=:0.0
 
 export PATH=~/bin:/usr/local/opt/python@3.8/bin:/usr/local/bin:/usr/local/sbin:$PATH
-export PATH="/usr/local/lib/ruby/gems/2.7.0/bin:/usr/local/opt/ruby/bin:$PATH"
+
+# Prefer Homebrew Ruby over the macOS system Ruby when it's installed.
+# Ruby is keg-only, so Homebrew won't put it on the PATH automatically.
+if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
+  export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+  # Add gem-installed binaries; glob the version dir so it survives Ruby upgrades.
+  for gem_bin in /opt/homebrew/lib/ruby/gems/*/bin; do
+    [ -d "$gem_bin" ] && export PATH="$gem_bin:$PATH"
+  done
+  export LDFLAGS="-L/opt/homebrew/opt/ruby/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
+fi
 
 alias glog='git log --name-status'
 alias glogme='git log --name-status --author=$USER'
@@ -16,8 +27,6 @@ function parse_gb {
   cut -c17- .git/HEAD 2> /dev/null
 }
 PS1="\W \[\033[01;33m\]\$(parse_gb)\[\033[00;37m\]$ "
-
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 export VOLTA_HOME="$HOME/.volta"
