@@ -1,33 +1,19 @@
 {
-  "permissions": {
-    "defaultMode": "auto"
-  },
-  "model": "claude-opus-4-8[1m]",
+  "model": "claude-fable-5[1m]",
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "remember@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-code-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-code"
-      }
-    },
-    "swift-ios-skills": {
-      "source": {
-        "source": "github",
-        "repo": "dpearson2699/swift-ios-skills"
-      }
-    }
+    "playwright@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "tui": "fullscreen",
-  "theme": "auto",
   "preferredNotifChannel": "terminal_bell",
   "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "agentPushNotifEnabled": true
 }
