@@ -2,9 +2,11 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "claude-opus-4-8[1m]",
   "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
+    "swift-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
@@ -12,11 +14,20 @@
         "source": "github",
         "repo": "anthropics/claude-code"
       }
+    },
+    "swift-ios-skills": {
+      "source": {
+        "source": "github",
+        "repo": "dpearson2699/swift-ios-skills"
+      }
     }
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "tui": "fullscreen",
   "theme": "auto",
   "preferredNotifChannel": "terminal_bell",
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
