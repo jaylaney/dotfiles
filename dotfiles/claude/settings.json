@@ -1,8 +1,31 @@
 {
-  "model": "claude-fable-5[1m]",
   "permissions": {
     "defaultMode": "auto"
   },
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/worktree-create.sh",
+            "statusMessage": "Creating worktree in .worktrees/"
+          }
+        ]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/worktree-remove.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "model": "claude-fable-5[1m]",
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
