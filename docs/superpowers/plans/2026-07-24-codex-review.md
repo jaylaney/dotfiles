@@ -107,7 +107,7 @@ No commit — this task changes no repo files.
 `````markdown
 ---
 description: Adversarial code review via codex CLI (current branch or a PR)
-allowed-tools: Bash(command -v:*), Bash(codex:*), Bash(git:*), Bash(gh pr view:*), Bash(mktemp:*), Agent
+allowed-tools: Bash(command -v:*), Bash(codex:*), Bash(git:*), Bash(gh pr view:*), Bash(mktemp:*), Bash(sed:*), Agent
 ---
 
 Get an adversarial second-model review from the codex CLI, verify its findings, and report only what survives. Optional argument: a GitHub PR number. $ARGUMENTS
