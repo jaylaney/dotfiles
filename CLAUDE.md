@@ -19,7 +19,7 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
-│   │   ├── commands/  # /commit, /push, /settings-sync
+│   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review
 │   │   └── hooks/     # Worktree lifecycle hooks (symlinked to ~/.claude/hooks)
 │   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
 │   └── local/bin/     # Scripts symlinked into ~/.local/bin
