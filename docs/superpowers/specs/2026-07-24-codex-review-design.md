@@ -21,11 +21,11 @@ Add a `/codex-review` slash command that gets a second-model adversarial review 
   - On the base branch itself → `codex exec review --uncommitted` (staged, unstaged, and untracked changes).
   - Nothing to review → say so and stop; codex is never invoked.
 - `/codex-review <PR#>` — review a GitHub PR without touching the user's working tree:
-  1. `gh pr view <PR#> --json baseRefName,headRefName` for metadata.
-  2. `git fetch origin pull/<PR#>/head`.
-  3. Create a temporary detached worktree from `FETCH_HEAD` (created by the main thread during target resolution).
-  4. Run the review against that worktree (`codex exec -C <tmpdir> review --base <baseRefName>`).
-  5. The subagent removes the temp worktree when the review finishes, always — success or failure.
+  1. `gh pr view <PR#> --json baseRefName,title,url` for metadata.
+  2. `git fetch origin` the PR head into a pinned ref, `refs/codex-review/pr<PR#>`, instead of plain `FETCH_HEAD`: a second fetch (for the base ref) would otherwise overwrite `FETCH_HEAD` with the base commit, silently leaving the worktree on the base instead of the PR head.
+  3. Create a temporary detached worktree from that pinned ref (created by the main thread during target resolution).
+  4. Run the review from inside that temp worktree — the subagent `cd`s into it, then runs `codex exec review --base origin/<baseRefName>` (the bare `<baseRefName>` may not resolve locally after a fetch; `origin/<baseRefName>` always does).
+  5. The subagent removes the temp worktree, the pinned ref, and the temp parent directory when the review finishes, always — success or failure.
 
 Resolved during implementation (plan Task 1 probe): `--base` diffs the working tree against the merge-base, so uncommitted changes ARE included in the review. No dirty-tree caveat is needed.
 

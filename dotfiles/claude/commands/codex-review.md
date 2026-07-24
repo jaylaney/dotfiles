@@ -1,6 +1,6 @@
 ---
 description: Adversarial code review via codex CLI (current branch or a PR). Manual only — never invoke proactively; run solely when the user explicitly types /codex-review.
-allowed-tools: Bash(command -v:*), Bash(codex:*), Bash(git:*), Bash(gh pr view:*), Bash(mktemp:*), Bash(sed:*), Agent
+allowed-tools: Bash(command -v:*), Bash(git:*), Bash(gh pr view:*), Bash(mktemp:*), Bash(sed:*), Agent
 ---
 
 Only run this command when the user explicitly invoked `/codex-review`. If you loaded it on your own initiative — because a code review seemed useful or was requested in general terms — stop and ask the user whether they want codex involved; a plain "review this" is not an invocation of this command.
@@ -17,14 +17,19 @@ Preconditions — stop with a single clear sentence if either fails:
 1. BASE = `git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null | sed 's|^origin/||'`; if empty, the first of `main`, `master` for which `git show-ref --verify --quiet refs/heads/<b>` succeeds. If none, tell the user you could not determine a base branch and stop.
 2. CURRENT = `git branch --show-current`.
    - CURRENT == BASE → MODE=`--uncommitted`. If `git status --porcelain` is empty: "Nothing to review — working tree is clean and you're on BASE." Stop.
-   - Otherwise → MODE=`--base BASE`. If `git rev-list --count BASE..HEAD` is 0 and `git status --porcelain` is empty: nothing to review, stop.
+   - Otherwise → MODE=`--base BASE`. If `git rev-list --count BASE..HEAD` is 0 and `git status --porcelain` is empty: nothing to review, stop. If `git show-ref --verify --quiet refs/heads/BASE` fails, use `--base origin/BASE` instead.
 3. WORKDIR=REPO_ROOT; CLEANUP="true" (nothing to clean up).
 
 **Argument N — review PR #N:**
-1. `gh pr view N --json baseRefName,title,url` — on any failure, show gh's error verbatim and stop.
-2. `git fetch origin "pull/N/head"` and `git fetch origin BASEREF` (baseRefName from step 1).
-3. `WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/codex-review-prN.XXXXXX")/wt` then `git worktree add --detach "$WORKDIR" FETCH_HEAD`.
-4. MODE=`--base BASEREF`; CLEANUP=`git -C REPO_ROOT worktree remove --force WORKDIR`.
+1. `gh pr view N --json baseRefName,title,url` — on any failure, show gh's error verbatim and stop. BASEREF = baseRefName.
+2. Run as ONE Bash call (shell state does not persist between Bash calls) and use the printed WORKDIR as a literal path afterwards. Fetching into a pinned ref matters: a second plain fetch would overwrite FETCH_HEAD with BASEREF and the worktree would silently hold the base commit instead of the PR head.
+
+    git fetch origin "+pull/N/head:refs/codex-review/prN" && git fetch origin BASEREF \
+      && WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/codex-review-prN.XXXXXX")/wt \
+      && git worktree add --detach "$WORKDIR" refs/codex-review/prN && echo "$WORKDIR"
+
+3. MODE=`--base origin/BASEREF` — the bare BASEREF often does not resolve locally after a fetch; origin/BASEREF always does.
+4. CLEANUP (three commands; PARENT is WORKDIR without the trailing `/wt`): `git -C "REPO_ROOT" worktree remove --force "WORKDIR"; git -C "REPO_ROOT" update-ref -d refs/codex-review/prN; rm -rf "PARENT"`.
 
 # Phase 2 — spawn the reviewer subagent
 
@@ -39,7 +44,7 @@ Step 1 — run codex, waiting by blocking rather than by ending your turn (a sub
 
 1b. Launch codex as ONE Bash call with run_in_background set to true (reviews may exceed the 10-minute foreground cap):
 
-    (cd WORKDIR && codex exec review MODE --ephemeral -o "$OUT" 2> "$ERR"); echo "exit=$?" > "$DONE"
+    (cd "WORKDIR" && codex exec review MODE --ephemeral -o "$OUT" 2> "$ERR"); echo "exit=$?" > "$DONE"
 
 1c. Block until the marker appears — run this in the FOREGROUND with a 570000 ms timeout; if it times out, run it again, up to 12 times total (~2 hours), after which treat it as "codex failed (no exit marker)" and go to Step 4:
 
@@ -56,7 +61,7 @@ Step 3 — verify every finding independently. For each finding, Read the cited 
 - UNCERTAIN — you cannot disprove it; note the caveat.
 If codex plainly said there are no findings, verify nothing and report that.
 
-Step 4 — cleanup, always, even after failures: run CLEANUP, then `rm -f "$OUT" "$ERR" "$DONE"`.
+Step 4 — cleanup, always, even after failures: run CLEANUP, then `rm -f "$OUT" "$ERR" "$DONE"`. If CLEANUP fails, say so in your report and include the leftover path.
 
 Step 5 — return exactly this as your final message (omit empty sections):
 
