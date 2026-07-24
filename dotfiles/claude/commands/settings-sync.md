@@ -1,3 +1,8 @@
+---
+description: Reconcile ~/.claude/settings.json with the repo copy, per setting
+allowed-tools: Bash(claude-settings:*), Bash(git diff:*), Bash(git add:*), Bash(git commit:*), AskUserQuestion
+---
+
 Reconcile Claude settings between the live file (`~/.claude/settings.json`)
 and the repo copy (`dotfiles/claude/settings.json`). Both are regular files
 kept in sync by copying — never symlink settings.json (a Claude Code bug

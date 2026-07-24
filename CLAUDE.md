@@ -121,7 +121,7 @@ Use the `install.sh` script for non-destructive symlinking:
 - Files in subdirectories maintain structure (e.g., `dotfiles/config/nvim/init.lua` → `~/.config/nvim/init.lua`)
 - Automatically creates necessary parent directories
 - Symlinks already pointing to the correct location are left as-is
-- Auto-skips: `.git`, `.DS_Store`, `README.md`, `CLAUDE.md`, `install.sh`
+- Auto-skips: `.git`, `.DS_Store`, `README.md`, `CLAUDE.md`, `install.sh`, `claude/settings.json`
 
 **Interactive conflict resolution:**
 When a file/symlink conflict is detected (not in --dry-run mode), you'll be prompted with:
