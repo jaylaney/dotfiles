@@ -102,7 +102,7 @@ No commit — this task changes no repo files.
 
 - [ ] **Step 1: Write `dotfiles/claude/commands/codex-review.md` with exactly this content**
 
-If Task 1 recorded `BASE_INCLUDES_UNCOMMITTED=yes`, DELETE the two lines marked ★ (the DIRTY tracking and the report footnote) — the warning is unnecessary.
+> **Amended after Task 1.** The probe recorded `PLANTED_BUG_FOUND=yes` and `BASE_INCLUDES_UNCOMMITTED=yes` (codex diffs the working tree against the merge-base, so uncommitted changes are reviewed). It also found that codex 0.145.0 rejects combining `--base`/`--uncommitted` with a custom `[PROMPT]` (`error: the argument '--base <BRANCH>' cannot be used with '[PROMPT]'`). The content below is the final form: the DIRTY tracking lines are gone, and codex runs with its built-in review instructions — the probe showed they surface planted bugs with `file:line` ranges and no style noise; adversarial filtering lives in the verification pass.
 
 `````markdown
 ---
@@ -123,7 +123,6 @@ Preconditions — stop with a single clear sentence if either fails:
 2. CURRENT = `git branch --show-current`.
    - CURRENT == BASE → MODE=`--uncommitted`. If `git status --porcelain` is empty: "Nothing to review — working tree is clean and you're on BASE." Stop.
    - Otherwise → MODE=`--base BASE`. If `git rev-list --count BASE..HEAD` is 0 and `git status --porcelain` is empty: nothing to review, stop.
-   - ★ If MODE is `--base` and `git status --porcelain` is non-empty, set DIRTY=yes (codex will not see uncommitted changes; the report must say so).
 3. WORKDIR=REPO_ROOT; CLEANUP="true" (nothing to clean up).
 
 **Argument N — review PR #N:**
@@ -139,12 +138,10 @@ Spawn ONE general-purpose subagent in the background with the prompt below, subs
 ---- SUBAGENT PROMPT START ----
 You are an adversarial code-review pipeline. Repo copy to review: WORKDIR. Target: TARGET.
 
-Step 1 — run codex. Execute this as ONE Bash call with run_in_background set to true (reviews may exceed 10 minutes; never run it in the foreground). Never add --dangerously-* flags or any workspace-write sandbox override — codex must stay in its default read-only sandbox.
+Step 1 — run codex. Execute this as ONE Bash call with run_in_background set to true (reviews may exceed 10 minutes; never run it in the foreground). Never add --dangerously-* flags or any workspace-write sandbox override — codex must stay in its default read-only sandbox. Do not append a custom prompt argument: codex rejects a prompt combined with --base/--uncommitted; its built-in review instructions apply.
 
     OUT=$(mktemp); ERR=$(mktemp)
-    cd WORKDIR && codex exec review MODE --ephemeral -o "$OUT" \
-      "Look only for actionable correctness, security, concurrency, data-loss, and regression issues. Verify each finding against the surrounding code before reporting it. Give the file and smallest relevant line range for every finding. No style or nit feedback. If there are no real findings, say so plainly." \
-      2> "$ERR"
+    cd WORKDIR && codex exec review MODE --ephemeral -o "$OUT" 2> "$ERR"
 
 Wait for the background job to finish — you will be re-invoked when it exits.
 
@@ -170,7 +167,6 @@ Step 5 — return exactly this as your final message (omit empty sections):
 - `file:line` — issue — the caveat
 **Dropped as false positives (N)**
 - `file:line` — issue — one-line reason it is not real
-★ If DIRTY=yes, end with: "Note: uncommitted changes were present and were not part of this review."
 ---- SUBAGENT PROMPT END ----
 `````
 
@@ -250,13 +246,13 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 - [ ] **Step 2: Execute the command file's instructions literally against the scratch repo**
 
-Acting as the command would (Phase 1 then Phase 2): resolve BASE=main, CURRENT=feature, MODE=`--base main`, DIRTY=yes; spawn the background general-purpose subagent with the exact SUBAGENT PROMPT from the command file, substituting WORKDIR/MODE/CLEANUP/TARGET.
+Acting as the command would (Phase 1 then Phase 2): resolve BASE=main, CURRENT=feature, MODE=`--base main`; spawn the background general-purpose subagent with the exact SUBAGENT PROMPT from the command file, substituting WORKDIR/MODE/CLEANUP/TARGET.
 
 - [ ] **Step 3: Check the subagent's report**
 
 Expected:
 - The off-by-one appears under **Confirmed** with `pay.py:` and a line number.
-- The report ends with the uncommitted-changes note (if Task 1 recorded `BASE_INCLUDES_UNCOMMITTED=no`).
+- The uncommitted `average_cents` bug may also appear — Task 1 showed `--base` reviews the working tree against the merge-base.
 - No raw codex output leaked into the main conversation — only the structured report.
 
 - [ ] **Step 4: Exercise the `--uncommitted` path**
@@ -265,7 +261,6 @@ In the scratch repo: `git checkout main`, append the uncommitted `average_cents`
 
 ```bash
 cd "$SCRATCH" && codex exec review --uncommitted --ephemeral -o "$SCRATCH/out2.md" \
-  "Look only for actionable correctness, security, concurrency, data-loss, and regression issues. Verify each finding against the surrounding code before reporting it. Give the file and smallest relevant line range for every finding. No style or nit feedback. If there are no real findings, say so plainly." \
   2> "$SCRATCH/err2.log"; echo "exit=$?"
 ```
 

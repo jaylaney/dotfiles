@@ -27,24 +27,22 @@ Add a `/codex-review` slash command that gets a second-model adversarial review 
   4. Run the review against that worktree (`codex exec -C <tmpdir> review --base <baseRefName>`).
   5. The subagent removes the temp worktree when the review finishes, always — success or failure.
 
-Open implementation question: whether `--base` includes uncommitted changes on a feature branch. Verify during implementation; if it does not and dirty files exist, the report must note that uncommitted work was not reviewed.
+Resolved during implementation (plan Task 1 probe): `--base` diffs the working tree against the merge-base, so uncommitted changes ARE included in the review. No dirty-tree caveat is needed.
 
 ## Architecture: main thread vs. subagent
 
 The main conversation does only the cheap, fast part — target resolution and validation (a handful of git/gh commands) — then spawns **one background subagent** (built-in general-purpose type; its instructions live inline in the command markdown, so no separate agent file). The subagent:
 
 1. Launches codex as a **background job** (`run_in_background`), sidestepping the 10-minute foreground Bash timeout — reviews may run longer.
-2. Invocation shape: `codex exec review --ephemeral -o <outfile> [--base <base> | --uncommitted] "<adversarial instructions>" 2><errfile>`, relying on codex's default read-only sandbox. Never pass `workspace-write` or any approval/sandbox bypass flag: a reviewer must not be able to edit anything.
+2. Invocation shape: `codex exec review [--base <base> | --uncommitted] --ephemeral -o <outfile> 2><errfile>`, relying on codex's default read-only sandbox and built-in review instructions (see the amended Review Instructions section). Never pass `workspace-write` or any approval/sandbox bypass flag: a reviewer must not be able to edit anything.
 3. When codex exits, reads the review from `<outfile>` and runs the verification pass: for each finding, read the cited file and line range plus enough surrounding context, then classify as **confirmed** (real and reachable), **false positive** (misread, already handled, unreachable), or **uncertain** (cannot disprove).
 4. Returns only the compact final report.
 
 The main conversation therefore sees exactly two things: "review started" and the final verified report (delivered as a background-task notification). Raw codex output and verification file-reading never enter the user's context, and the user can keep working while the review runs.
 
-## Adversarial Instructions (the codex prompt)
+## Review Instructions (amended 2026-07-24 during implementation)
 
-Baked into the command file as the `PROMPT` argument:
-
-> Look only for actionable correctness, security, concurrency, data-loss, and regression issues. Verify each finding against the surrounding code before reporting it. Give the file and smallest relevant line range for every finding. No style or nit feedback. If there are no real findings, say so plainly.
+The original design baked adversarial instructions into the invocation as codex's `[PROMPT]` argument. The plan's Task 1 probe found codex 0.145.0 rejects a custom prompt combined with `--base` or `--uncommitted` (`error: the argument '--base <BRANCH>' cannot be used with '[PROMPT]'`), so the command uses codex's built-in review instructions instead. The probe showed they already deliver what the custom prompt asked for: actionable correctness findings with `file:line` ranges and no style noise. The adversarial filtering this spec cares about lives in Claude's independent verification pass.
 
 ## Report Format
 
@@ -64,7 +62,7 @@ Checked in the main thread, before spawning the subagent:
 Inside the subagent:
 
 - codex stderr goes to a temp file — discarded on success, tail surfaced if codex exits non-zero, so auth/network failures are diagnosable.
-- An empty output file is reported as "codex produced no output", never conflated with "codex found no issues" (codex is instructed to state the latter explicitly).
+- An empty output file is reported as "codex produced no output", never conflated with "codex found no issues" (a genuine no-findings review still writes a non-empty final message).
 - Temp worktree (PR mode) and temp files are always cleaned up.
 
 ## Out of Scope (YAGNI)
