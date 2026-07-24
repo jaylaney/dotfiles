@@ -82,7 +82,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Files and directories to skip
-SKIP_FILES=(".git" ".DS_Store" "README.md" "CLAUDE.md" "install.sh")
+# claude/settings.json is skipped: symlinking it breaks Claude Code's
+# defaultMode "auto"; the claude-settings script owns that file instead.
+SKIP_FILES=(".git" ".DS_Store" "README.md" "CLAUDE.md" "install.sh" "claude/settings.json")
 
 # Show diff between two files
 show_diff() {

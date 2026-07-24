@@ -19,7 +19,7 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
-│   │   ├── commands/
+│   │   ├── commands/  # /commit, /push, /settings-sync
 │   │   └── hooks/     # Worktree lifecycle hooks (symlinked to ~/.claude/hooks)
 │   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
 │   └── local/bin/     # Scripts symlinked into ~/.local/bin
@@ -100,6 +100,7 @@ This is a personal dotfiles repository for macOS development environment configu
 
 - `start_postgres`: Launch PostgreSQL server from Homebrew installation
 - `update-all`: Script (not an alias) that runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
+- `claude-settings`: Script syncing `~/.claude/settings.json` with the repo copy (`status`/`diff`/`save`/`apply`); `/settings-sync` runs a guided per-setting review in Claude
 
 ## File Installation/Deployment
 
@@ -135,3 +136,4 @@ Backups are created with format: `filename.backup.YYYYMMDD_HHMMSS`
 
 - `.DS_Store` files are gitignored
 - PostgreSQL is installed via Homebrew and requires manual starting (use `start_postgres` alias)
+- `claude/settings.json` is copied, never symlinked: Claude Code ignores `defaultMode: "auto"` when settings.json is a symlink. install.sh skips it; use `claude-settings apply` to install it.

@@ -115,6 +115,10 @@ their executable bit must be set on the source file in this repository.
 - `dotfiles/claude/` contains Claude-specific commands and settings, including
   worktree lifecycle hooks. Treat these as tool configuration, not as
   repository-wide agent instructions.
+- `dotfiles/claude/settings.json` syncs with `~/.claude/settings.json` by
+  copying only (`claude-settings` script, `/settings-sync` command). Never
+  symlink it: Claude Code ignores `defaultMode: "auto"` through a symlink.
+  `install.sh` skips this file.
 
 ## Working Rules
 
