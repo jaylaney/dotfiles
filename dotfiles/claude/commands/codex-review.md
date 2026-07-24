@@ -1,7 +1,9 @@
 ---
-description: Adversarial code review via codex CLI (current branch or a PR)
+description: Adversarial code review via codex CLI (current branch or a PR). Manual only — never invoke proactively; run solely when the user explicitly types /codex-review.
 allowed-tools: Bash(command -v:*), Bash(codex:*), Bash(git:*), Bash(gh pr view:*), Bash(mktemp:*), Bash(sed:*), Agent
 ---
+
+Only run this command when the user explicitly invoked `/codex-review`. If you loaded it on your own initiative — because a code review seemed useful or was requested in general terms — stop and ask the user whether they want codex involved; a plain "review this" is not an invocation of this command.
 
 Get an adversarial second-model review from the codex CLI, verify its findings, and report only what survives. Optional argument: a GitHub PR number. $ARGUMENTS
 
