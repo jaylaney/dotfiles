@@ -27,6 +27,7 @@ check() {
 }
 
 TMP="$(mktemp -d)"
+TMP="$(cd "$TMP" && pwd -P)"  # canonicalize: the script resolves symlinks, so expected paths must too
 trap 'rm -rf "$TMP"' EXIT
 
 SANDBOX_DOTFILES="$TMP/repo/dotfiles"
