@@ -32,7 +32,7 @@ Each step goes through a small `run_step` helper that:
 ## Error Handling
 
 - No `set -e`: a failing step is recorded but never prevents later steps from running.
-- After all steps, the script prints a summary — one ✓/✗ line per step.
+- After all steps, the script prints a summary — one ✓/✗ line per step, in execution order.
 - Exit code is 0 only if every step succeeded, otherwise 1, so `update-all && ...` chains correctly.
 - Ctrl-C aborts the whole script (default SIGINT behavior, no trap).
 
@@ -45,5 +45,7 @@ Each step goes through a small `run_step` helper that:
 ## Testing
 
 - `shellcheck` passes on the script.
-- One real run to confirm normal output and exit 0.
-- One run with a deliberately failing step (temporarily added) to confirm the ✗ summary path and exit 1.
+- Stub-based tests: run the script with a temp directory of `claude`/`brew`/`npm` stubs prepended to `PATH`, so no real upgrades run and the production script is never edited. Each stub records its invocation to a file.
+  - Failure path: the stub for an early step (`claude`) exits non-zero while the rest succeed. Assert that every subsequent command still ran (via the stubs' invocation records), that all four summary rows appear in execution order with ✗ only on the failed step, and that the script exits 1. Failing an *early* step is what proves continue-on-error — a `set -e` regression would pass a last-step-fails test.
+  - Success path: all stubs exit 0. Assert four ✓ rows and exit 0.
+- One real run at the end to confirm the actual commands behave as expected interactively.
