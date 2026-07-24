@@ -35,12 +35,16 @@ hardcoded repo location.
 
 **Subcommands:**
 
-- `status` — one line: in sync, differs, or which side is missing.
-  Exit codes: 0 = both files exist with identical content; 1 = they differ or
-  a side is missing; 2 = usage error. Other tooling can test drift cheaply.
+- `status` — one line: in sync, differs, which side is missing, or — even
+  when contents match — `live is a symlink (run: claude-settings apply)`.
+  A symlinked live file is the bug state regardless of content, so it is
+  never reported as in sync. Exit codes: 0 = both sides are regular files
+  with identical content; 1 = they differ, a side is missing, or the live
+  file is a symlink; 2 = usage error. Other tooling can test drift cheaply.
 - `diff` — unified diff of repo vs live, labeled `repo` and `live` so
-  direction is unambiguous. When a side is missing it prints which one
-  instead of a diff. Exit codes mirror `status`.
+  direction is unambiguous. When a side is missing or the live file is a
+  symlink it prints the `status` message instead of a diff. Exit codes
+  mirror `status`.
 - `save` — copy live → repo. No backup on this side: the repo file is
   git-tracked, so `git diff` is the review and git history is the undo.
   Prints a reminder to review and commit. Errors (message to stderr, exit 1)
@@ -94,6 +98,8 @@ becomes: `./install.sh $HOME`, then `claude-settings apply`.
   copy the real script into the fake repo, invoke it through a symlink from
   the fake home so path resolution is exercised. Assert:
   - `status` exit codes and messages: in-sync (0), differs (1), live missing (1)
+  - `status`/`diff` on a symlinked live file with matching content report the
+    symlink state and exit 1
   - `save` copies live → repo
   - `apply` copies repo → live and creates exactly one timestamped backup
   - `apply` on a symlinked live file replaces it with a regular file
