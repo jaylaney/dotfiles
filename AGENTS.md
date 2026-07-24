@@ -26,6 +26,7 @@ This repository manages a personal macOS development environment. Files under
 │   ├── tmux.conf
 │   ├── claude/
 │   │   ├── commands/
+│   │   ├── hooks/
 │   │   └── settings.json
 │   ├── config/
 │   │   ├── gh/
