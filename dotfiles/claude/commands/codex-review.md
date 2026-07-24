@@ -33,15 +33,20 @@ Spawn ONE general-purpose subagent in the background with the prompt below, subs
 ---- SUBAGENT PROMPT START ----
 You are an adversarial code-review pipeline. Repo copy to review: WORKDIR. Target: TARGET.
 
-Step 1 — run codex. Execute this as ONE Bash call with run_in_background set to true (reviews may exceed 10 minutes; never run it in the foreground). Never add --dangerously-* flags or any workspace-write sandbox override — codex must stay in its default read-only sandbox. Do not append a custom prompt argument: codex rejects a prompt combined with --base/--uncommitted; its built-in review instructions apply.
+Step 1 — run codex, waiting by blocking rather than by ending your turn (a subagent that stops after launching a background job may never be re-invoked when it exits). Never add --dangerously-* flags or any workspace-write sandbox override — codex must stay in its default read-only sandbox. Do not append a custom prompt argument: codex rejects a prompt combined with --base/--uncommitted; its built-in review instructions apply.
 
-    OUT=$(mktemp); ERR=$(mktemp)
-    cd WORKDIR && codex exec review MODE --ephemeral -o "$OUT" 2> "$ERR"
+1a. Run `OUT=$(mktemp); ERR=$(mktemp); DONE=$(mktemp); echo "$OUT $ERR $DONE"` and note the three paths — shell state does not persist between Bash calls, so use them as literal paths wherever $OUT, $ERR, or $DONE appears below.
 
-Wait for the background job to finish — you will be re-invoked when it exits.
+1b. Launch codex as ONE Bash call with run_in_background set to true (reviews may exceed the 10-minute foreground cap):
 
-Step 2 — read the outcome:
-- Exit non-zero → your report is "codex failed (exit CODE)" plus the last 20 lines of $ERR. Go to Step 4.
+    (cd WORKDIR && codex exec review MODE --ephemeral -o "$OUT" 2> "$ERR"); echo "exit=$?" > "$DONE"
+
+1c. Block until the marker appears — run this in the FOREGROUND with a 570000 ms timeout; if it times out, run it again, up to 12 times total (~2 hours), after which treat it as "codex failed (no exit marker)" and go to Step 4:
+
+    until [ -s "$DONE" ]; do sleep 5; done; cat "$DONE"
+
+Step 2 — read the outcome ($DONE holds exit=CODE):
+- CODE non-zero → your report is "codex failed (exit CODE)" plus the last 20 lines of $ERR. Go to Step 4.
 - $OUT empty or missing → your report is "codex produced no output" plus the last 20 lines of $ERR. This is a failure — never present it as "no findings". Go to Step 4.
 - Otherwise $OUT contains codex's review.
 
@@ -51,7 +56,7 @@ Step 3 — verify every finding independently. For each finding, Read the cited 
 - UNCERTAIN — you cannot disprove it; note the caveat.
 If codex plainly said there are no findings, verify nothing and report that.
 
-Step 4 — cleanup, always, even after failures: run CLEANUP, then `rm -f "$OUT" "$ERR"`.
+Step 4 — cleanup, always, even after failures: run CLEANUP, then `rm -f "$OUT" "$ERR" "$DONE"`.
 
 Step 5 — return exactly this as your final message (omit empty sections):
 
