@@ -20,8 +20,10 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code custom commands
 │   │   └── commands/
-│   └── config/        # Application configs (nvim, ghostty)
+│   ├── config/        # Application configs (nvim, ghostty)
+│   └── local/bin/     # Scripts symlinked into ~/.local/bin
 ├── install.sh         # Installation script
+├── tests/             # Stub-based tests for scripts
 ├── CLAUDE.md          # This documentation
 ├── README.md          # Repository readme
 └── .gitignore         # Git ignore rules
@@ -95,6 +97,7 @@ This is a personal dotfiles repository for macOS development environment configu
 - `ptl`: Tail Rails development log
 - `psx`: Process search wrapper
 - `start_postgres`: Launch PostgreSQL server from Homebrew installation
+- `update-all`: Script (not an alias) that runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
 
 ## File Installation/Deployment
 
