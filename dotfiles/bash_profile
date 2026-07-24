@@ -14,15 +14,6 @@ if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
   export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
 fi
 
-alias glog='git log --name-status'
-alias glogme='git log --name-status --author=$USER'
-
-#for rails
-alias ptl="tail -f log/development.log"
-alias sc='script/console'
-
-alias psx="ps auxw | grep $1"
-
 function parse_gb {
   cut -c17- .git/HEAD 2> /dev/null
 }

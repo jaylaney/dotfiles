@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (bash/zsh), Neovim setup, and terminal (Ghostty) settings.
+This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (zsh primary, bash legacy), editor setups (Neovim, Vim), terminal (Ghostty), tool configs (git, gh, tmux, opencode), and scripts installed to `~/.local/bin`.
 
 **Repository Structure:**
 ```
@@ -20,10 +20,12 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code custom commands
 │   │   └── commands/
-│   ├── config/        # Application configs (nvim, ghostty)
+│   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
 │   └── local/bin/     # Scripts symlinked into ~/.local/bin
 ├── install.sh         # Installation script
 ├── tests/             # Stub-based tests for scripts
+├── docs/              # Design specs and implementation plans
+├── AGENTS.md          # Agent-neutral repository guidance
 ├── CLAUDE.md          # This documentation
 ├── README.md          # Repository readme
 └── .gitignore         # Git ignore rules
@@ -32,30 +34,31 @@ This is a personal dotfiles repository for macOS development environment configu
 ## Architecture
 
 ### Shell Configuration
-- **zshrc**: Primary shell configuration using Oh-My-Zsh framework
-  - Uses random theme selection
+- **zshrc**: Primary shell configuration (zsh is the active shell)
+  - Starship prompt (`starship init zsh`); Oh-My-Zsh remains only as commented-out examples
   - Homebrew initialization via `/opt/homebrew/bin/brew shellenv`
-  - rbenv for Ruby version management
+  - `EDITOR`/`VISUAL` set to nvim; emacs-style key bindings (`bindkey -e`)
+  - Homebrew Ruby (keg-only) and gem binaries added to PATH — no version manager
   - Docker CLI completions enabled
-  - Custom PATH includes: Ruby gems, Docker, LM Studio CLI
+  - PATH additions: Docker, LM Studio CLI, `~/.local/bin`
   - PostgreSQL alias: `start_postgres` command available
 
-- **bash_profile**: Bash login shell configuration
-  - JAVA_HOME setup, git aliases, Rails helpers
-  - rbenv initialization
-  - Volta integration
+- **bash_profile**: Bash login shell configuration (bash is not the primary shell)
+  - Legacy PATH entries (python@3.8, /usr/local), Homebrew Ruby block
+  - Custom PS1 with git branch, bash completion
+  - Volta, Rust (cargo), LM Studio
 
 - **bashrc**: Bash runtime configuration
-  - Java 1.7 configuration
-  - Volta and LM Studio PATH additions
+  - JAVA_HOME via `/usr/libexec/java_home`, set only when a JDK is installed
+  - Volta, LM Studio, Rust (cargo)
 
 - **profile**: Generic shell profile (fallback for POSIX-compliant shells)
-  - Volta and LM Studio PATH configuration
+  - Volta, LM Studio, Rust (cargo)
 
-- **zprofile**: Minimal, primarily handles Homebrew shellenv initialization
+- **zprofile**: Currently empty (Homebrew shellenv lives in zshrc)
 
 ### Neovim Configuration (`dotfiles/config/nvim/`)
-- **Plugin Manager**: lazy.nvim (auto-bootstrapping from init.lua)
+- **Plugin Manager**: lazy.nvim (bootstrapped from `lua/config/lazy.lua`, required by init.lua)
 - **Leader Key**: Space (`<leader>` = ` `)
 - **Local Leader**: Backslash (`<localleader>` = `\`)
 - **Plugin Structure**: Modular - plugins defined in `lua/plugins/*.lua`
@@ -84,18 +87,16 @@ This is a personal dotfiles repository for macOS development environment configu
 ## Key Environment Variables & Paths
 
 - Homebrew: `/opt/homebrew` (Apple Silicon)
-- Ruby: Managed by rbenv + Homebrew Ruby at `/opt/homebrew/opt/ruby`
-- Java: Uses macOS `java_home` utility
+- Ruby: Homebrew keg-only Ruby at `/opt/homebrew/opt/ruby` (no version manager)
+- Java: Uses macOS `java_home` utility (bashrc, only when a JDK is installed)
 - Docker: Completions and binaries in `~/.docker/`
 - LM Studio: CLI available in `~/.lmstudio/bin`
 - Volta: Node.js toolchain in `~/.volta`
+- Rust: `~/.cargo/env` sourced by bash_profile, bashrc, and profile
+- Prompt: Starship (initialized in zshrc)
 
 ## Common Aliases
 
-- `glog`: Git log with file names
-- `glogme`: Git log filtered to current user
-- `ptl`: Tail Rails development log
-- `psx`: Process search wrapper
 - `start_postgres`: Launch PostgreSQL server from Homebrew installation
 - `update-all`: Script (not an alias) that runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
 

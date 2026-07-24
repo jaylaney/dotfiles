@@ -88,8 +88,8 @@ their executable bit must be set on the source file in this repository.
 - Oh My Zsh settings remain as commented examples; Oh My Zsh is not currently
   loaded by `zshrc`.
 - `dotfiles/bash_profile`, `dotfiles/bashrc`, and `dotfiles/profile` retain
-  Bash/POSIX setup for Homebrew Ruby, Volta, Cargo, LM Studio, Java detection,
-  and legacy aliases where applicable.
+  Bash/POSIX setup for Homebrew Ruby, Volta, Cargo, LM Studio, and Java
+  detection.
 - `dotfiles/zprofile` is currently empty.
 
 ### Editors
