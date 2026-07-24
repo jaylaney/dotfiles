@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+# claude-settings: keep ~/.claude/settings.json and the repo copy in sync.
+# Copies only — a Claude Code bug ignores defaultMode: "auto" when
+# settings.json is a symlink, so this file must never be symlinked.
+
+set -u
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+REPO_FILE="$(cd "$(dirname "$SCRIPT_PATH")/../.." && pwd)/claude/settings.json"
+LIVE_FILE="$HOME/.claude/settings.json"
+
+usage() {
+  cat >&2 <<'EOF'
+Usage: claude-settings <status|diff|save|apply>
+
+  status  Report whether live (~/.claude/settings.json) and repo copies match
+  diff    Unified diff, repo vs live (+ lines are live-side content)
+  save    Copy live -> repo (review with git diff, then commit)
+  apply   Copy repo -> live (timestamped backup of the old live file first)
+
+status/diff exit 0 when in sync, 1 when they differ or a side is missing.
+EOF
+  exit 2
+}
+
+cmd_status() {
+  if [ ! -f "$LIVE_FILE" ] && [ ! -f "$REPO_FILE" ]; then
+    echo "both missing: $LIVE_FILE, $REPO_FILE"
+    return 1
+  fi
+  if [ ! -f "$LIVE_FILE" ]; then
+    echo "live missing: $LIVE_FILE"
+    return 1
+  fi
+  if [ ! -f "$REPO_FILE" ]; then
+    echo "repo missing: $REPO_FILE"
+    return 1
+  fi
+  if cmp -s "$REPO_FILE" "$LIVE_FILE"; then
+    echo "in sync"
+    return 0
+  fi
+  echo "differs (run: claude-settings diff)"
+  return 1
+}
+
+cmd_diff() {
+  if [ ! -f "$REPO_FILE" ] || [ ! -f "$LIVE_FILE" ]; then
+    cmd_status
+    return
+  fi
+  if cmp -s "$REPO_FILE" "$LIVE_FILE"; then
+    echo "in sync"
+    return 0
+  fi
+  diff -u -L repo -L live "$REPO_FILE" "$LIVE_FILE"
+  return 1
+}
+
+cmd_save() {
+  if [ ! -f "$LIVE_FILE" ]; then
+    echo "error: live file missing: $LIVE_FILE" >&2
+    return 1
+  fi
+  if [ -f "$REPO_FILE" ] && cmp -s "$LIVE_FILE" "$REPO_FILE"; then
+    echo "already in sync"
+    return 0
+  fi
+  cp "$LIVE_FILE" "$REPO_FILE"
+  echo "saved live -> repo: $REPO_FILE"
+  echo "review and commit: git diff $REPO_FILE"
+}
+
+cmd_apply() {
+  local backup
+  if [ ! -f "$REPO_FILE" ]; then
+    echo "error: repo file missing: $REPO_FILE" >&2
+    return 1
+  fi
+  # A symlinked live file is never left in place — it must become a copy.
+  if [ -f "$LIVE_FILE" ] && [ ! -L "$LIVE_FILE" ] && cmp -s "$REPO_FILE" "$LIVE_FILE"; then
+    echo "already in sync"
+    return 0
+  fi
+  mkdir -p "$(dirname "$LIVE_FILE")"
+  if [ -e "$LIVE_FILE" ] || [ -L "$LIVE_FILE" ]; then
+    backup="$LIVE_FILE.backup.$(date +%Y%m%d_%H%M%S)"
+    mv "$LIVE_FILE" "$backup"
+    echo "backed up live to: $backup"
+  fi
+  cp "$REPO_FILE" "$LIVE_FILE"
+  echo "applied repo -> live: $LIVE_FILE"
+}
+
+case "${1-}" in
+  status) cmd_status ;;
+  diff)   cmd_diff ;;
+  save)   cmd_save ;;
+  apply)  cmd_apply ;;
+  *)      usage ;;
+esac
