@@ -95,6 +95,12 @@ check "save no-op message"   "already in sync" "$OUTPUT"
 echo "apply replaces a symlinked live file"
 rm "$LIVE_FILE"
 ln -s "$REPO_FILE" "$LIVE_FILE"
+run_cmd status
+check "status exits 1 on symlinked live" "1" "$STATUS"
+check "status flags the symlink" "live is a symlink (run: claude-settings apply)" "$OUTPUT"
+run_cmd diff
+check "diff exits 1 on symlinked live" "1" "$STATUS"
+check "diff delegates the symlink warning" "live is a symlink (run: claude-settings apply)" "$OUTPUT"
 run_cmd apply
 check "apply exits 0 on symlink"   "0" "$STATUS"
 check "live is now a regular file" "regular" \

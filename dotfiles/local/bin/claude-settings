@@ -19,12 +19,17 @@ Usage: claude-settings <status|diff|save|apply>
   save    Copy live -> repo (review with git diff, then commit)
   apply   Copy repo -> live (timestamped backup of the old live file first)
 
-status/diff exit 0 when in sync, 1 when they differ or a side is missing.
+status/diff exit 0 when in sync, 1 when they differ, a side is missing, or
+the live file is a symlink.
 EOF
   exit 2
 }
 
 cmd_status() {
+  if [ -L "$LIVE_FILE" ]; then
+    echo "live is a symlink (run: claude-settings apply)"
+    return 1
+  fi
   if [ ! -f "$LIVE_FILE" ] && [ ! -f "$REPO_FILE" ]; then
     echo "both missing: $LIVE_FILE, $REPO_FILE"
     return 1
@@ -46,7 +51,7 @@ cmd_status() {
 }
 
 cmd_diff() {
-  if [ ! -f "$REPO_FILE" ] || [ ! -f "$LIVE_FILE" ]; then
+  if [ -L "$LIVE_FILE" ] || [ ! -f "$REPO_FILE" ] || [ ! -f "$LIVE_FILE" ]; then
     cmd_status
     return
   fi
