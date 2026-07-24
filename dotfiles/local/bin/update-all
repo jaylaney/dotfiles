@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# update-all: run the routine upgrade dance and report pass/fail per step.
+# Deliberately no `set -e` — every step runs even if an earlier one fails.
+
+if [ -t 1 ]; then
+  GREEN=$'\033[0;32m'
+  RED=$'\033[0;31m'
+  BLUE=$'\033[0;34m'
+  NC=$'\033[0m'
+else
+  GREEN='' RED='' BLUE='' NC=''
+fi
+
+STEP_LABELS=()
+STEP_EXITS=()
+
+run_step() {
+  local name="$1" status
+  shift
+  printf '\n%s==> %s: %s%s\n' "$BLUE" "$name" "$*" "$NC"
+  "$@"
+  status=$?
+  STEP_LABELS+=("$name: $*")
+  STEP_EXITS+=("$status")
+}
+
+run_step "Claude Code" claude update
+run_step "Homebrew"    brew upgrade
+run_step "Homebrew"    brew cleanup
+run_step "npm globals" npm update -g
+
+printf '\n%sSummary%s\n' "$BLUE" "$NC"
+failures=0
+for i in "${!STEP_LABELS[@]}"; do
+  if [ "${STEP_EXITS[$i]}" -eq 0 ]; then
+    printf '  %s✓%s %s\n' "$GREEN" "$NC" "${STEP_LABELS[$i]}"
+  else
+    printf '  %s✗%s %s (exit %s)\n' "$RED" "$NC" "${STEP_LABELS[$i]}" "${STEP_EXITS[$i]}"
+    failures=$((failures + 1))
+  fi
+done
+
+[ "$failures" -eq 0 ] || exit 1
