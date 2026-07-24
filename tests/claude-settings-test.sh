@@ -101,6 +101,15 @@ check "live is now a regular file" "regular" \
   "$([ -L "$LIVE_FILE" ] && echo symlink || echo regular)"
 check "live content matches repo"  "$(cat "$REPO_FILE")" "$(cat "$LIVE_FILE")"
 
+echo "save propagates copy failure"
+printf '{"model":"sonnet"}\n' > "$LIVE_FILE"
+chmod 444 "$REPO_FILE"
+run_cmd save
+check "save exits 1 when copy fails" "1" "$STATUS"
+check "save copy-failure error message" "1" \
+  "$(printf '%s\n' "$OUTPUT" | grep -c '^error: copy failed')"
+chmod 644 "$REPO_FILE"
+
 echo "errors and usage"
 rm "$LIVE_FILE"
 run_cmd status

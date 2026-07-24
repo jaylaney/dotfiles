@@ -67,7 +67,10 @@ cmd_save() {
     echo "already in sync"
     return 0
   fi
-  cp "$LIVE_FILE" "$REPO_FILE"
+  if ! cp "$LIVE_FILE" "$REPO_FILE"; then
+    echo "error: copy failed: $LIVE_FILE -> $REPO_FILE" >&2
+    return 1
+  fi
   echo "saved live -> repo: $REPO_FILE"
   echo "review and commit: git diff $REPO_FILE"
 }
@@ -83,13 +86,22 @@ cmd_apply() {
     echo "already in sync"
     return 0
   fi
-  mkdir -p "$(dirname "$LIVE_FILE")"
+  if ! mkdir -p "$(dirname "$LIVE_FILE")"; then
+    echo "error: cannot create directory: $(dirname "$LIVE_FILE")" >&2
+    return 1
+  fi
   if [ -e "$LIVE_FILE" ] || [ -L "$LIVE_FILE" ]; then
     backup="$LIVE_FILE.backup.$(date +%Y%m%d_%H%M%S)"
-    mv "$LIVE_FILE" "$backup"
+    if ! mv "$LIVE_FILE" "$backup"; then
+      echo "error: backup failed: $LIVE_FILE -> $backup" >&2
+      return 1
+    fi
     echo "backed up live to: $backup"
   fi
-  cp "$REPO_FILE" "$LIVE_FILE"
+  if ! cp "$REPO_FILE" "$LIVE_FILE"; then
+    echo "error: copy failed: $REPO_FILE -> $LIVE_FILE" >&2
+    return 1
+  fi
   echo "applied repo -> live: $LIVE_FILE"
 }
 
