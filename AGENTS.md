@@ -27,14 +27,18 @@ This repository manages a personal macOS development environment. Files under
 │   ├── claude/
 │   │   ├── commands/
 │   │   └── settings.json
-│   └── config/
-│       ├── gh/
-│       ├── git/
-│       ├── ghostty/
-│       ├── nvim/
-│       └── opencode/
+│   ├── config/
+│   │   ├── gh/
+│   │   ├── git/
+│   │   ├── ghostty/
+│   │   ├── nvim/
+│   │   └── opencode/
+│   └── local/
+│       └── bin/
 ├── docs/superpowers/
+│   ├── plans/
 │   └── specs/
+├── tests/
 ├── install.sh
 ├── AGENTS.md
 ├── CLAUDE.md
@@ -65,7 +69,7 @@ The destination is derived from the path relative to `dotfiles/`:
 - `dotfiles/zshrc` becomes `<target>/.zshrc`.
 - `dotfiles/config/nvim/init.lua` becomes
   `<target>/.config/nvim/init.lua`.
-- `dotfiles/local/bin/update-all` would become
+- `dotfiles/local/bin/update-all` becomes
   `<target>/.local/bin/update-all`.
 
 Parent directories are created as needed. Existing symlinks to the correct
@@ -159,11 +163,12 @@ git diff --check
   shell, package-manager, or assistant configuration unless the user asks for
   an integration test.
 
-## Active Design Work
+## Design Spec: `update-all`
 
-`docs/superpowers/specs/2026-07-24-update-all-design.md` specifies a planned
-`dotfiles/local/bin/update-all` command. The design calls for sequential Claude,
-Homebrew, cleanup, and global npm update steps; streaming terminal output;
-continuation after individual failures; a final per-step summary; and an
-aggregate success/failure exit code. Keep any implementation and tests aligned
-with that specification.
+`docs/superpowers/specs/2026-07-24-update-all-design.md` specifies the
+`update-all` command, implemented at `dotfiles/local/bin/update-all` with
+stub-based tests at `tests/update-all-test.sh`. The design calls for
+sequential Claude, Homebrew, cleanup, and global npm update steps; streaming
+terminal output; continuation after individual failures; a final per-step
+summary; and an aggregate success/failure exit code. The implementation and
+tests match that specification.

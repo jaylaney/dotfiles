@@ -34,7 +34,9 @@ Each step goes through a small `run_step` helper that:
 - No `set -e`: a failing step is recorded but never prevents later steps from running.
 - After all steps, the script prints a summary — one ✓/✗ line per step, in execution order.
 - Exit code is 0 only if every step succeeded, otherwise 1, so `update-all && ...` chains correctly.
-- Ctrl-C aborts the whole script (default SIGINT behavior, no trap).
+- No SIGINT trap is installed. Ctrl-C aborts the script when the running tool
+  dies on the signal; a tool that catches SIGINT and exits normally is
+  recorded as a failed step and the run continues.
 
 ## Out of Scope (YAGNI)
 
