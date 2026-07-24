@@ -4,10 +4,14 @@ Personal macOS development environment configuration files with an interactive i
 
 ## What's Included
 
-- **Shell configurations**: bash, zsh (with Oh-My-Zsh)
+- **Shell configurations**: zsh (primary, with Starship prompt), bash (legacy)
 - **Editor configs**: Neovim (with lazy.nvim), Vim, MacVim
 - **Terminal**: Ghostty configuration
-- **Development tools**: rbenv, Volta, Docker, LM Studio integrations
+- **Multiplexer**: tmux configuration
+- **Tool configs**: git, gh, opencode
+- **Claude Code**: settings, custom commands (`/commit`, `/push`, `/settings-sync`), and worktree lifecycle hooks
+- **Scripts**: `update-all` and `claude-settings`, installed to `~/.local/bin`
+- **Development tools**: Homebrew Ruby, Volta, Docker, LM Studio integrations
 
 ## Features
 
@@ -77,16 +81,31 @@ The installation script:
 │   ├── vimrc
 │   ├── gvimrc
 │   ├── tmux.conf
-│   ├── claude/        # Claude Code custom commands
-│   │   └── commands/
-│   └── config/        # Application configs (nvim, ghostty)
+│   ├── claude/        # Claude Code settings, commands, and hooks
+│   │   ├── commands/  # /commit, /push, /settings-sync
+│   │   └── hooks/     # Worktree lifecycle hooks
+│   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
+│   └── local/bin/     # Scripts symlinked into ~/.local/bin
 ├── install.sh         # Installation script
+├── tests/             # Stub-based tests for scripts
+├── docs/              # Design specs and implementation plans
+├── AGENTS.md          # Agent-neutral repository guidance
 ├── CLAUDE.md          # Developer documentation
 └── README.md          # This file
 ```
 
+## Scripts
+
+Installed to `~/.local/bin` via symlinks from `dotfiles/local/bin/`:
+
+- **`update-all`** - Runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
+- **`claude-settings`** - Syncs `~/.claude/settings.json` with the repo copy (`status`/`diff`/`save`/`apply`); the `/settings-sync` Claude Code command runs a guided per-setting review
+
+Tests for both live in `tests/` and can be run directly (e.g., `./tests/update-all-test.sh`).
+
 ## Notes
 
 - Backups are saved with format: `filename.backup.YYYYMMDD_HHMMSS`
-- The script automatically skips: `.git`, `.DS_Store`, documentation files
+- The script automatically skips: `.git`, `.DS_Store`, documentation files, and `claude/settings.json`
+- `claude/settings.json` is copied, never symlinked — Claude Code ignores `defaultMode: "auto"` when settings.json is a symlink. Use `claude-settings apply` to install it
 - See `CLAUDE.md` for detailed architecture and configuration information
