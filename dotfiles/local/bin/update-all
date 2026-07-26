@@ -26,7 +26,7 @@ run_step() {
 }
 
 run_step "Claude Code" claude update
-run_step "Homebrew"    brew upgrade
+run_step "Homebrew"    brew upgrade --yes
 run_step "Homebrew"    brew cleanup
 run_step "npm globals" npm update -g
 

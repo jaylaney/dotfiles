@@ -55,10 +55,10 @@ make_stubs "$TMP/fail" "$TMP/fail.log" claude
 run_script "$TMP/fail"
 check "exit code is 1" "1" "$STATUS"
 check "all commands ran in order" \
-  "$(printf 'claude update\nbrew upgrade\nbrew cleanup\nnpm update -g')" \
+  "$(printf 'claude update\nbrew upgrade --yes\nbrew cleanup\nnpm update -g')" \
   "$(cat "$TMP/fail.log" 2>/dev/null)"
 check "summary rows in order with ✗ only on failed step" \
-  "$(printf '  ✗ Claude Code: claude update (exit 1)\n  ✓ Homebrew: brew upgrade\n  ✓ Homebrew: brew cleanup\n  ✓ npm globals: npm update -g')" \
+  "$(printf '  ✗ Claude Code: claude update (exit 1)\n  ✓ Homebrew: brew upgrade --yes\n  ✓ Homebrew: brew cleanup\n  ✓ npm globals: npm update -g')" \
   "$(printf '%s\n' "$OUTPUT" | grep -E '^  [✓✗]')"
 
 echo "success path: everything passes"
@@ -66,7 +66,7 @@ make_stubs "$TMP/ok" "$TMP/ok.log" ""
 run_script "$TMP/ok"
 check "exit code is 0" "0" "$STATUS"
 check "four ✓ rows in order" \
-  "$(printf '  ✓ Claude Code: claude update\n  ✓ Homebrew: brew upgrade\n  ✓ Homebrew: brew cleanup\n  ✓ npm globals: npm update -g')" \
+  "$(printf '  ✓ Claude Code: claude update\n  ✓ Homebrew: brew upgrade --yes\n  ✓ Homebrew: brew cleanup\n  ✓ npm globals: npm update -g')" \
   "$(printf '%s\n' "$OUTPUT" | grep -E '^  [✓✗]')"
 
 echo
