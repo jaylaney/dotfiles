@@ -2,6 +2,10 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "statusLine": {
+    "type": "command",
+    "command": "sh ~/.claude/statusline-command.sh"
+  },
   "hooks": {
     "WorktreeCreate": [
       {
