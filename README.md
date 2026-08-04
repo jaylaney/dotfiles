@@ -96,6 +96,7 @@ The installation script:
 ├── docs/              # Design specs and implementation plans
 ├── AGENTS.md          # Agent-neutral repository guidance
 ├── CLAUDE.md          # Developer documentation
+├── LICENSE            # MIT license
 └── README.md          # This file
 ```
 
@@ -114,3 +115,7 @@ Tests for both live in `tests/` and can be run directly (e.g., `./tests/update-a
 - The script automatically skips: `.git`, `.DS_Store`, documentation files, and `claude/settings.json`
 - `claude/settings.json` is copied, never symlinked — Claude Code ignores `defaultMode: "auto"` when settings.json is a symlink. Use `claude-settings apply` to install it
 - See `CLAUDE.md` for detailed architecture and configuration information
+
+## License
+
+[MIT](LICENSE)

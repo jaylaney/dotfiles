@@ -47,6 +47,7 @@ This repository manages a personal macOS development environment. Files under
 ├── install.sh
 ├── AGENTS.md
 ├── CLAUDE.md
+├── LICENSE
 └── README.md
 ```
 

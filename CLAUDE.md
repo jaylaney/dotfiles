@@ -32,6 +32,7 @@ This is a personal dotfiles repository for macOS development environment configu
 ├── docs/              # Design specs and implementation plans
 ├── AGENTS.md          # Agent-neutral repository guidance
 ├── CLAUDE.md          # This documentation
+├── LICENSE            # MIT license
 ├── README.md          # Repository readme
 └── .gitignore         # Git ignore rules
 ```
