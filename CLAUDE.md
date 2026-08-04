@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (zsh primary, bash legacy), editor setups (Neovim, Vim), terminal (Ghostty), tool configs (git, gh, tmux, opencode), and scripts installed to `~/.local/bin`.
+This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (zsh primary, bash legacy), editor setups (Neovim, Vim), terminal (Ghostty), tool configs (git, gh, tmux, opencode, codex), and scripts installed to `~/.local/bin`.
 
 **Repository Structure:**
 ```
@@ -23,6 +23,8 @@ This is a personal dotfiles repository for macOS development environment configu
 │   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review
 │   │   ├── hooks/     # Worktree lifecycle hooks (symlinked to ~/.claude/hooks)
 │   │   └── statusline-command.sh  # Status line: cwd, git branch, worktree name
+│   ├── codex/         # Codex CLI config
+│   │   └── AGENTS.md  # User-level Codex guidance (symlinked to ~/.codex/AGENTS.md)
 │   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
 │   └── local/bin/     # Scripts symlinked into ~/.local/bin
 ├── install.sh         # Installation script

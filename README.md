@@ -10,6 +10,7 @@ Personal macOS development environment configuration files with an interactive i
 - **Multiplexer**: tmux configuration
 - **Tool configs**: git, gh, opencode
 - **Claude Code**: settings, user-level `CLAUDE.md`, custom commands (`/commit`, `/push`, `/settings-sync`, `/codex-review`), worktree lifecycle hooks, and status line script
+- **Codex CLI**: user-level `AGENTS.md` guidance
 - **Scripts**: `update-all` and `claude-settings`, installed to `~/.local/bin`
 - **Development tools**: Homebrew Ruby, Rust, and Docker integrations
 
@@ -86,6 +87,8 @@ The installation script:
 │   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review
 │   │   ├── hooks/     # Worktree lifecycle hooks
 │   │   └── statusline-command.sh  # Status line: cwd, git branch, worktree name
+│   ├── codex/         # Codex CLI config
+│   │   └── AGENTS.md  # User-level Codex guidance (symlinked to ~/.codex/AGENTS.md)
 │   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
 │   └── local/bin/     # Scripts symlinked into ~/.local/bin
 ├── install.sh         # Installation script

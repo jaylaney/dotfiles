@@ -30,6 +30,8 @@ This repository manages a personal macOS development environment. Files under
 │   │   ├── hooks/
 │   │   ├── settings.json
 │   │   └── statusline-command.sh
+│   ├── codex/
+│   │   └── AGENTS.md
 │   ├── config/
 │   │   ├── gh/
 │   │   ├── git/
@@ -49,8 +51,8 @@ This repository manages a personal macOS development environment. Files under
 ```
 
 Paths are case-sensitive in documentation and code. For example, the existing
-assistant configuration directory is `dotfiles/claude/`, not
-`dotfiles/Claude/` or `dotfiles/Codex/`.
+assistant configuration directories are `dotfiles/claude/` and
+`dotfiles/codex/`, not `dotfiles/Claude/` or `dotfiles/Codex/`.
 
 ## Installation Model
 
@@ -121,6 +123,9 @@ their executable bit must be set on the source file in this repository.
   copying only (`claude-settings` script, `/settings-sync` command). Never
   symlink it: Claude Code ignores `defaultMode: "auto"` through a symlink.
   `install.sh` skips this file.
+- `dotfiles/codex/AGENTS.md` holds user-level Codex guidance, symlinked to
+  `~/.codex/AGENTS.md`. Like `dotfiles/claude/`, treat it as tool
+  configuration, not repository-wide agent instructions.
 
 ## Working Rules
 
