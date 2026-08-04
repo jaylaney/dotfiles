@@ -101,6 +101,7 @@ Use the `install.sh` script for non-destructive symlinking:
 - Automatically creates necessary parent directories
 - Symlinks already pointing to the correct location are left as-is
 - Auto-skips: `.git`, `.DS_Store`, `README.md`, `CLAUDE.md`, `install.sh`, `claude/settings.json`
+- After the install pass, scans the managed directories for symlinks pointing into the repo whose source is gone and prompts [r]emove / [s]kip / [q]uit (`--dry-run` reports only)
 
 **Interactive conflict resolution:**
 When a file/symlink conflict is detected (not in --dry-run mode), you'll be prompted with:

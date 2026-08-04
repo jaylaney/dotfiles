@@ -22,6 +22,7 @@ Personal macOS development environment configuration files with an interactive i
 - 💾 **Automatic backups** - Creates timestamped backups when overwriting (e.g., `.zshrc.backup.20251030_143022`)
 - 🧪 **Dry-run mode** - Preview changes without making them
 - 📁 **Directory preservation** - Only symlinks files, creates necessary parent directories automatically
+- 🧹 **Dangling link cleanup** - Detects symlinks left behind when repo files are deleted and offers to remove them
 
 ## Quick Start
 
@@ -58,6 +59,8 @@ When the installer detects a conflict (file already exists or symlink points els
 - **[d]iff** - Show unified diff between existing and new file, then re-prompt
 - **[o]verwrite** - Create timestamped backup and replace with new symlink
 - **[q]uit** - Exit installation immediately
+
+After the install pass, the script checks `~`, `~/.config`, `~/.claude`, `~/.codex`, and `~/.local/bin` for symlinks that point into this repo but whose source no longer exists (left behind when a pull deletes repo files) and prompts **[r]emove / [s]kip / [q]uit** for each. `--dry-run` reports them without prompting.
 
 ## How It Works
 

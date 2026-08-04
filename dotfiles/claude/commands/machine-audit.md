@@ -22,8 +22,9 @@ Steps:
 2. Probe, in read-only mode:
    - Dangling symlinks: scan `$HOME`, `~/.config`, `~/.claude`, `~/.codex`,
      and `~/.local/bin` for symlinks pointing into this repo whose targets no
-     longer exist (left behind when repo files are deleted; install.sh does
-     not prune these).
+     longer exist (left behind when repo files are deleted; `./install.sh`
+     detects and offers to remove these in the directories it manages, but
+     this audit also catches ones elsewhere).
    - Orphaned tool directories: for suspects like `~/.volta`, `~/.lmstudio`,
      `~/.oh-my-zsh`, `~/.vim`, `~/.cargo`/`~/.rustup`, and anything similar
      found in `$HOME` — is it referenced by the active shell config? Is its

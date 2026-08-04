@@ -40,6 +40,14 @@ INTERACTIVE MODE:
     [o]verwrite  - Backup existing file (with timestamp) and create new symlink
     [q]uit       - Exit installation immediately
 
+    After the install pass, the script scans for symlinks that point into
+    this repo but whose source no longer exists (e.g. deleted by a git pull)
+    and prompts for each:
+
+    [r]emove     - Delete the dangling symlink
+    [s]kip       - Leave it in place
+    [q]uit       - Exit installation immediately
+
 EXAMPLES:
     ./install.sh                    # Install to \$HOME with interactive prompts
     ./install.sh --dry-run          # Preview what would be installed
