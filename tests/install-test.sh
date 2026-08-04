@@ -55,6 +55,29 @@ OUTPUT="$("$SCRIPT" --dry-run "$TMP/clean" 2>&1)"
 check "prints the all-clear line" "1" \
   "$(printf '%s\n' "$OUTPUT" | grep -c "No dangling symlinks")"
 
+# The removal prompt reads from FD 3 (the tty). `script -q` allocates a
+# pty and relays our piped stdin to it, so the prompt can be answered
+# non-interactively without hijacking the developer's terminal.
+run_interactive() {
+  # run_interactive <answer> <target_dir>; sets STATUS
+  printf '%s\n' "$1" | script -q /dev/null "$SCRIPT" "$2" > /dev/null 2>&1
+  STATUS=$?
+}
+
+echo "removal: [r] deletes the dangler, leaves the decoy"
+make_target "$TMP/rm"
+run_interactive r "$TMP/rm"
+check "exit code is 0" "0" "$STATUS"
+check "dangler removed" "yes" \
+  "$([ ! -e "$TMP/rm/.dangler" ] && [ ! -L "$TMP/rm/.dangler" ] && echo yes)"
+check "decoy untouched" "yes" "$([ -L "$TMP/rm/.decoy" ] && echo yes)"
+
+echo "removal: [s] leaves the dangler in place"
+make_target "$TMP/skip"
+run_interactive s "$TMP/skip"
+check "exit code is 0" "0" "$STATUS"
+check "dangler still present" "yes" "$([ -L "$TMP/skip/.dangler" ] && echo yes)"
+
 echo
 echo "$PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ] || exit 1

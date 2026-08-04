@@ -184,6 +184,45 @@ prompt_conflict_resolution() {
     done
 }
 
+# Interactive prompt for removing a dangling symlink
+prompt_dangling_removal() {
+    local target="$1"
+    local dest="$(readlink "$target")"
+
+    while true; do
+        echo ""
+        echo -e "${YELLOW}⚠ Dangling symlink: source no longer exists in repo${NC}"
+        echo -e "  Target: $target"
+        echo -e "  Points to: $dest"
+        echo ""
+        echo -e "Options: ${RED}[r]${NC}emove  ${GREEN}[s]${NC}kip  ${YELLOW}[q]${NC}uit"
+        # Read from FD 3 (terminal) not from stdin which is hijacked by the find loop
+        read -p "Choice: " -r choice_input <&3
+        choice="${choice_input:0:1}"
+        echo ""
+
+        case $choice in
+            r|R)
+                rm "$target"
+                echo -e "${GREEN}✓ Removed: $target${NC}"
+                return 0
+                ;;
+            s|S)
+                echo -e "${YELLOW}Skipping: $target${NC}"
+                return 1
+                ;;
+            q|Q)
+                echo -e "${RED}Installation cancelled by user${NC}"
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}Invalid choice. Please try again.${NC}"
+                continue
+                ;;
+        esac
+    done
+}
+
 # Find symlinks in the managed directories that point into this repo but
 # whose source no longer exists (left behind when repo files are deleted)
 check_dangling_symlinks() {
@@ -217,7 +256,7 @@ check_dangling_symlinks() {
         if [[ "$DRY_RUN" == true ]]; then
             echo -e "${RED}[DRY RUN] Dangling symlink: $link -> $(readlink "$link")${NC}"
         else
-            echo -e "${YELLOW}⚠ Dangling symlink: $link -> $(readlink "$link")${NC}"
+            prompt_dangling_removal "$link" || true
         fi
     done
 }
