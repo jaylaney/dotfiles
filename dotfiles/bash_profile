@@ -1,4 +1,4 @@
-export PATH=~/bin:/usr/local/bin:/usr/local/sbin:$PATH
+export PATH=~/bin:/usr/local/bin:$PATH
 
 # Prefer Homebrew Ruby over the macOS system Ruby when it's installed.
 # Ruby is keg-only, so Homebrew won't put it on the PATH automatically.
