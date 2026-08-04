@@ -161,7 +161,7 @@ prompt_conflict_resolution() {
         echo ""
         echo -e "Options: ${GREEN}[s]${NC}kip  ${BLUE}[d]${NC}iff  ${RED}[o]${NC}verwrite  ${YELLOW}[q]${NC}uit"
         # Read from FD 3 (terminal) not from stdin which is hijacked by the find loop
-        read -p "Choice: " -r choice_input <&3
+        read -p "Choice: " -r choice_input <&3 || { echo ""; echo -e "${YELLOW}No input available; skipping $target${NC}"; return 1; }
         # Take first character of input
         choice="${choice_input:0:1}"
         echo ""
@@ -205,7 +205,7 @@ prompt_dangling_removal() {
         echo ""
         echo -e "Options: ${RED}[r]${NC}emove  ${GREEN}[s]${NC}kip  ${YELLOW}[q]${NC}uit"
         # Read from FD 3 (terminal) not from stdin which is hijacked by the find loop
-        read -p "Choice: " -r choice_input <&3
+        read -p "Choice: " -r choice_input <&3 || { echo ""; echo -e "${YELLOW}No input available; leaving $target in place${NC}"; return 1; }
         choice="${choice_input:0:1}"
         echo ""
 
@@ -247,7 +247,9 @@ check_dangling_symlinks() {
         if [[ "$dest" != /* ]]; then
             dest="$(cd "$(dirname "$link")" 2>/dev/null && pwd)/$dest" || continue
         fi
-        if [[ "$dest" == "$DOTFILES_DIR"/* ]] && [[ ! -e "$link" ]]; then
+        # Reject destinations that escape the repo via "..", which would
+        # prefix-match $DOTFILES_DIR/ yet resolve outside it
+        if [[ "$dest" == "$DOTFILES_DIR"/* ]] && [[ "$dest" != *"/../"* ]] && [[ ! -e "$link" ]]; then
             dangling+=("$link")
         fi
     done < <(
@@ -377,7 +379,7 @@ echo ""
 
 # Open /dev/tty on file descriptor 3 for reading user input during the loop
 # This prevents the while-read loop from hijacking stdin
-exec 3</dev/tty 2>/dev/null || exec 3<&0
+{ exec 3</dev/tty; } 2>/dev/null || exec 3<&0
 
 # Process all files recursively
 while IFS= read -r -d '' file; do

@@ -69,9 +69,11 @@ A symlink is dangling iff **both**:
   temp directory.
 - Valid repo-pointing links, and broken links pointing elsewhere, are never
   reported or touched.
-- Non-interactive environments (no `/dev/tty`): same behavior as the existing
-  conflict prompt in that situation — the prompt fails and the script
-  continues without acting on that link.
+- Non-interactive environments (no `/dev/tty`): input falls back to stdin. If
+  no input is available at all (the read fails or hits EOF), each prompt
+  prints a note that it is skipping that item and returns — the dangling
+  prompt leaves the link in place, the conflict prompt skips the file — and
+  the script continues to the next item rather than re-prompting.
 
 ## Testing
 

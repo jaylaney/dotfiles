@@ -67,6 +67,7 @@ assistant configuration directories are `dotfiles/claude/` and
 With no arguments, the script prints help and exits. During a real install it
 prompts before replacing conflicts and offers skip, diff, overwrite-with-backup,
 or quit.
+
 After the install pass it scans the target's top-level dot-entries plus
 `.config`, `.claude`, `.codex`, and `.local/bin` for symlinks pointing into
 `dotfiles/` whose source no longer exists, and prompts remove/skip/quit for
