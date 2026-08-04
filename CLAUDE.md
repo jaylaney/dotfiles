@@ -43,8 +43,8 @@ This is a personal dotfiles repository for macOS development environment configu
   - Homebrew initialization via `/opt/homebrew/bin/brew shellenv`
   - `EDITOR`/`VISUAL` set to nvim; emacs-style key bindings (`bindkey -e`)
   - Homebrew Ruby (keg-only) and gem binaries added to PATH — no version manager
-  - Docker CLI completions enabled
-  - PATH additions: Docker, `~/.local/bin`
+  - Shell completions initialized via compinit
+  - PATH additions: `~/.local/bin`
 
 - **bash_profile**: Bash login shell configuration (bash is not the primary shell)
   - Legacy PATH entries (~/bin, /usr/local), Homebrew Ruby block
@@ -74,7 +74,6 @@ This is a personal dotfiles repository for macOS development environment configu
 - Homebrew: `/opt/homebrew` (Apple Silicon)
 - Ruby: Homebrew keg-only Ruby at `/opt/homebrew/opt/ruby` (no version manager)
 - Java: Uses macOS `java_home` utility (bashrc, only when a JDK is installed)
-- Docker: Completions and binaries in `~/.docker/`
 - Prompt: Starship (initialized in zshrc)
 
 ## Scripts

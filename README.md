@@ -12,7 +12,7 @@ Personal macOS development environment configuration files with an interactive i
 - **Claude Code**: settings, user-level `CLAUDE.md`, custom commands (`/commit`, `/push`, `/settings-sync`, `/codex-review`, `/machine-audit`), worktree lifecycle hooks, and status line script
 - **Codex CLI**: user-level `AGENTS.md` guidance
 - **Scripts**: `update-all` and `claude-settings`, installed to `~/.local/bin`
-- **Development tools**: Homebrew Ruby and Docker integrations
+- **Development tools**: Homebrew Ruby integration
 
 ## Features
 

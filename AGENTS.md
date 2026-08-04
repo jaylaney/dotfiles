@@ -85,9 +85,9 @@ their executable bit must be set on the source file in this repository.
 ### Shells
 
 - `dotfiles/zshrc` is the primary interactive configuration. It initializes
-  Apple Silicon Homebrew, sets Neovim as the editor, adds Docker, Homebrew Ruby,
-  Ruby gem binaries, and `~/.local/bin` to `PATH`, enables Docker
-  completions, initializes Starship, and uses Emacs-style key bindings.
+  Apple Silicon Homebrew, sets Neovim as the editor, adds Homebrew Ruby,
+  Ruby gem binaries, and `~/.local/bin` to `PATH`, initializes shell
+  completions and Starship, and uses Emacs-style key bindings.
 - `dotfiles/bash_profile` and `dotfiles/bashrc` retain legacy Bash setup for
   Homebrew Ruby and Java detection; `dotfiles/profile` is currently empty.
 - `dotfiles/zprofile` is currently empty.
