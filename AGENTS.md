@@ -25,6 +25,7 @@ This repository manages a personal macOS development environment. Files under
 │   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/
+│   │   ├── CLAUDE.md
 │   │   ├── commands/
 │   │   ├── hooks/
 │   │   ├── settings.json

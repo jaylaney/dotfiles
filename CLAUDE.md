@@ -19,6 +19,7 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
+│   │   ├── CLAUDE.md  # User-level instructions (symlinked to ~/.claude/CLAUDE.md)
 │   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review
 │   │   ├── hooks/     # Worktree lifecycle hooks (symlinked to ~/.claude/hooks)
 │   │   └── statusline-command.sh  # Status line: cwd, git branch, worktree name
