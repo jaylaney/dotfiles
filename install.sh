@@ -191,10 +191,10 @@ check_dangling_symlinks() {
     local link dest dir
 
     while IFS= read -r -d '' link; do
-        dest="$(readlink "$link")"
+        dest="$(readlink "$link" 2>/dev/null)" || continue
         # Resolve relative destinations against the link's directory
         if [[ "$dest" != /* ]]; then
-            dest="$(cd "$(dirname "$link")" && pwd)/$dest"
+            dest="$(cd "$(dirname "$link")" 2>/dev/null && pwd)/$dest" || continue
         fi
         if [[ "$dest" == "$DOTFILES_DIR"/* ]] && [[ ! -e "$link" ]]; then
             dangling+=("$link")
