@@ -9,9 +9,9 @@ Personal macOS development environment configuration files with an interactive i
 - **Terminal**: Ghostty configuration
 - **Multiplexer**: tmux configuration
 - **Tool configs**: git, gh, opencode
-- **Claude Code**: settings, custom commands (`/commit`, `/push`, `/settings-sync`, `/codex-review`), and worktree lifecycle hooks
+- **Claude Code**: settings, user-level `CLAUDE.md`, custom commands (`/commit`, `/push`, `/settings-sync`, `/codex-review`), worktree lifecycle hooks, and status line script
 - **Scripts**: `update-all` and `claude-settings`, installed to `~/.local/bin`
-- **Development tools**: Homebrew Ruby, Volta, Docker, LM Studio integrations
+- **Development tools**: Homebrew Ruby, Rust, and Docker integrations
 
 ## Features
 
@@ -82,8 +82,10 @@ The installation script:
 │   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
+│   │   ├── CLAUDE.md  # User-level instructions (symlinked to ~/.claude/CLAUDE.md)
 │   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review
-│   │   └── hooks/     # Worktree lifecycle hooks
+│   │   ├── hooks/     # Worktree lifecycle hooks
+│   │   └── statusline-command.sh  # Status line: cwd, git branch, worktree name
 │   ├── config/        # Application configs (nvim, ghostty, git, gh, opencode)
 │   └── local/bin/     # Scripts symlinked into ~/.local/bin
 ├── install.sh         # Installation script

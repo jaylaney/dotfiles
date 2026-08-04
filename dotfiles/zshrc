@@ -114,9 +114,6 @@ if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
   export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
 fi
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/jay/.lmstudio/bin"
-# End of LM Studio CLI section
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=(/Users/jay/.docker/completions $fpath)
 autoload -Uz compinit

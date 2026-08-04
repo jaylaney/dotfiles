@@ -43,20 +43,20 @@ This is a personal dotfiles repository for macOS development environment configu
   - `EDITOR`/`VISUAL` set to nvim; emacs-style key bindings (`bindkey -e`)
   - Homebrew Ruby (keg-only) and gem binaries added to PATH — no version manager
   - Docker CLI completions enabled
-  - PATH additions: Docker, LM Studio CLI, `~/.local/bin`
+  - PATH additions: Docker, `~/.local/bin`
   - PostgreSQL alias: `start_postgres` command available
 
 - **bash_profile**: Bash login shell configuration (bash is not the primary shell)
   - Legacy PATH entries (python@3.8, /usr/local), Homebrew Ruby block
   - Custom PS1 with git branch, bash completion
-  - Volta, Rust (cargo), LM Studio
+  - Rust (cargo)
 
 - **bashrc**: Bash runtime configuration
   - JAVA_HOME via `/usr/libexec/java_home`, set only when a JDK is installed
-  - Volta, LM Studio, Rust (cargo)
+  - Rust (cargo)
 
 - **profile**: Generic shell profile (fallback for POSIX-compliant shells)
-  - Volta, LM Studio, Rust (cargo)
+  - Rust (cargo)
 
 - **zprofile**: Currently empty (Homebrew shellenv lives in zshrc)
 
@@ -93,8 +93,6 @@ This is a personal dotfiles repository for macOS development environment configu
 - Ruby: Homebrew keg-only Ruby at `/opt/homebrew/opt/ruby` (no version manager)
 - Java: Uses macOS `java_home` utility (bashrc, only when a JDK is installed)
 - Docker: Completions and binaries in `~/.docker/`
-- LM Studio: CLI available in `~/.lmstudio/bin`
-- Volta: Node.js toolchain in `~/.volta`
 - Rust: `~/.cargo/env` sourced by bash_profile, bashrc, and profile
 - Prompt: Starship (initialized in zshrc)
 

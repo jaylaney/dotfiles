@@ -85,14 +85,13 @@ their executable bit must be set on the source file in this repository.
 
 - `dotfiles/zshrc` is the primary interactive configuration. It initializes
   Apple Silicon Homebrew, sets Neovim as the editor, adds Docker, Homebrew Ruby,
-  Ruby gem binaries, LM Studio, and `~/.local/bin` to `PATH`, enables Docker
+  Ruby gem binaries, and `~/.local/bin` to `PATH`, enables Docker
   completions, initializes Starship, and uses Emacs-style key bindings.
 - The `start_postgres` alias launches the Homebrew PostgreSQL server.
 - Oh My Zsh settings remain as commented examples; Oh My Zsh is not currently
   loaded by `zshrc`.
 - `dotfiles/bash_profile`, `dotfiles/bashrc`, and `dotfiles/profile` retain
-  Bash/POSIX setup for Homebrew Ruby, Volta, Cargo, LM Studio, and Java
-  detection.
+  Bash/POSIX setup for Homebrew Ruby, Cargo, and Java detection.
 - `dotfiles/zprofile` is currently empty.
 
 ### Editors
