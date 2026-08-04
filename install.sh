@@ -203,9 +203,13 @@ prompt_dangling_removal() {
 
         case $choice in
             r|R)
-                rm "$target"
-                echo -e "${GREEN}✓ Removed: $target${NC}"
-                return 0
+                if rm "$target"; then
+                    echo -e "${GREEN}✓ Removed: $target${NC}"
+                    return 0
+                else
+                    echo -e "${RED}Failed to remove: $target${NC}"
+                    return 1
+                fi
                 ;;
             s|S)
                 echo -e "${YELLOW}Skipping: $target${NC}"
