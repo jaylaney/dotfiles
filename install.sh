@@ -184,6 +184,44 @@ prompt_conflict_resolution() {
     done
 }
 
+# Find symlinks in the managed directories that point into this repo but
+# whose source no longer exists (left behind when repo files are deleted)
+check_dangling_symlinks() {
+    local dangling=()
+    local link dest dir
+
+    while IFS= read -r -d '' link; do
+        dest="$(readlink "$link")"
+        # Resolve relative destinations against the link's directory
+        if [[ "$dest" != /* ]]; then
+            dest="$(cd "$(dirname "$link")" && pwd)/$dest"
+        fi
+        if [[ "$dest" == "$DOTFILES_DIR"/* ]] && [[ ! -e "$link" ]]; then
+            dangling+=("$link")
+        fi
+    done < <(
+        find "$TARGET_DIR" -maxdepth 1 -name ".*" -type l -print0 2>/dev/null
+        for dir in "$TARGET_DIR/.config" "$TARGET_DIR/.claude" "$TARGET_DIR/.codex" "$TARGET_DIR/.local/bin"; do
+            if [[ -d "$dir" ]]; then
+                find "$dir" -type l -print0 2>/dev/null
+            fi
+        done
+    )
+
+    if [[ ${#dangling[@]} -eq 0 ]]; then
+        echo -e "${GREEN}✓ No dangling symlinks${NC}"
+        return 0
+    fi
+
+    for link in "${dangling[@]}"; do
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "${RED}[DRY RUN] Dangling symlink: $link -> $(readlink "$link")${NC}"
+        else
+            echo -e "${YELLOW}⚠ Dangling symlink: $link -> $(readlink "$link")${NC}"
+        fi
+    done
+}
+
 should_skip() {
     local file="$1"
     for skip in "${SKIP_FILES[@]}"; do
@@ -307,6 +345,9 @@ while IFS= read -r -d '' file; do
 
     process_file "$rel_path"
 done < <(find "$DOTFILES_DIR" -type f -print0)
+
+echo ""
+check_dangling_symlinks
 
 echo ""
 if [[ "$DRY_RUN" == true ]]; then
