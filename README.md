@@ -5,14 +5,14 @@ Personal macOS development environment configuration files with an interactive i
 ## What's Included
 
 - **Shell configurations**: zsh (primary, with Starship prompt), bash (legacy)
-- **Editor configs**: Neovim (with lazy.nvim), Vim, MacVim
+- **Editor configs**: Neovim (with lazy.nvim)
 - **Terminal**: Ghostty configuration
 - **Multiplexer**: tmux configuration
 - **Tool configs**: git, gh, opencode
 - **Claude Code**: settings, user-level `CLAUDE.md`, custom commands (`/commit`, `/push`, `/settings-sync`, `/codex-review`), worktree lifecycle hooks, and status line script
 - **Codex CLI**: user-level `AGENTS.md` guidance
 - **Scripts**: `update-all` and `claude-settings`, installed to `~/.local/bin`
-- **Development tools**: Homebrew Ruby, Rust, and Docker integrations
+- **Development tools**: Homebrew Ruby and Docker integrations
 
 ## Features
 
@@ -79,8 +79,6 @@ The installation script:
 │   ├── profile
 │   ├── zshrc
 │   ├── zprofile
-│   ├── vimrc
-│   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
 │   │   ├── CLAUDE.md  # User-level instructions (symlinked to ~/.claude/CLAUDE.md)

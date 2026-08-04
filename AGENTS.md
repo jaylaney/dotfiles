@@ -21,8 +21,6 @@ This repository manages a personal macOS development environment. Files under
 │   ├── profile
 │   ├── zprofile
 │   ├── zshrc
-│   ├── vimrc
-│   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/
 │   │   ├── CLAUDE.md
@@ -90,11 +88,8 @@ their executable bit must be set on the source file in this repository.
   Apple Silicon Homebrew, sets Neovim as the editor, adds Docker, Homebrew Ruby,
   Ruby gem binaries, and `~/.local/bin` to `PATH`, enables Docker
   completions, initializes Starship, and uses Emacs-style key bindings.
-- The `start_postgres` alias launches the Homebrew PostgreSQL server.
-- Oh My Zsh settings remain as commented examples; Oh My Zsh is not currently
-  loaded by `zshrc`.
-- `dotfiles/bash_profile`, `dotfiles/bashrc`, and `dotfiles/profile` retain
-  Bash/POSIX setup for Homebrew Ruby, Cargo, and Java detection.
+- `dotfiles/bash_profile` and `dotfiles/bashrc` retain legacy Bash setup for
+  Homebrew Ruby and Java detection; `dotfiles/profile` is currently empty.
 - `dotfiles/zprofile` is currently empty.
 
 ### Editors
@@ -105,8 +100,7 @@ their executable bit must be set on the source file in this repository.
 - The leader is Space and the local leader is Backslash.
 - `nvim-tree` replaces netrw. Window navigation uses Control or Option with
   `h`, `j`, `k`, and `l`.
-- Classic Vim, MacVim, and tmux configuration remain in their top-level files
-  under `dotfiles/`.
+- tmux configuration remains in its top-level file under `dotfiles/`.
 
 ### Terminal and Tooling
 

@@ -1,6 +1,4 @@
-export DISPLAY=:0.0
-
-export PATH=~/bin:/usr/local/opt/python@3.8/bin:/usr/local/bin:/usr/local/sbin:$PATH
+export PATH=~/bin:/usr/local/bin:/usr/local/sbin:$PATH
 
 # Prefer Homebrew Ruby over the macOS system Ruby when it's installed.
 # Ruby is keg-only, so Homebrew won't put it on the PATH automatically.
@@ -18,7 +16,4 @@ function parse_gb {
   cut -c17- .git/HEAD 2> /dev/null
 }
 PS1="\W \[\033[01;33m\]\$(parse_gb)\[\033[00;37m\]$ "
-
-[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
-. "$HOME/.cargo/env"
 

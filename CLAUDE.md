@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (zsh primary, bash legacy), editor setups (Neovim, Vim), terminal (Ghostty), tool configs (git, gh, tmux, opencode, codex), and scripts installed to `~/.local/bin`.
+This is a personal dotfiles repository for macOS development environment configuration. It manages shell configurations (zsh primary, bash legacy), editor setup (Neovim), terminal (Ghostty), tool configs (git, gh, tmux, opencode, codex), and scripts installed to `~/.local/bin`.
 
 **Repository Structure:**
 ```
@@ -15,8 +15,6 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── profile
 │   ├── zshrc
 │   ├── zprofile
-│   ├── vimrc
-│   ├── gvimrc
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
 │   │   ├── CLAUDE.md  # User-level instructions (symlinked to ~/.claude/CLAUDE.md)
@@ -41,25 +39,21 @@ This is a personal dotfiles repository for macOS development environment configu
 
 ### Shell Configuration
 - **zshrc**: Primary shell configuration (zsh is the active shell)
-  - Starship prompt (`starship init zsh`); Oh-My-Zsh remains only as commented-out examples
+  - Starship prompt (`starship init zsh`)
   - Homebrew initialization via `/opt/homebrew/bin/brew shellenv`
   - `EDITOR`/`VISUAL` set to nvim; emacs-style key bindings (`bindkey -e`)
   - Homebrew Ruby (keg-only) and gem binaries added to PATH — no version manager
   - Docker CLI completions enabled
   - PATH additions: Docker, `~/.local/bin`
-  - PostgreSQL alias: `start_postgres` command available
 
 - **bash_profile**: Bash login shell configuration (bash is not the primary shell)
-  - Legacy PATH entries (python@3.8, /usr/local), Homebrew Ruby block
-  - Custom PS1 with git branch, bash completion
-  - Rust (cargo)
+  - Legacy PATH entries (~/bin, /usr/local), Homebrew Ruby block
+  - Custom PS1 with git branch
 
 - **bashrc**: Bash runtime configuration
   - JAVA_HOME via `/usr/libexec/java_home`, set only when a JDK is installed
-  - Rust (cargo)
 
-- **profile**: Generic shell profile (fallback for POSIX-compliant shells)
-  - Rust (cargo)
+- **profile**: Generic shell profile (fallback for POSIX-compliant shells), currently empty
 
 - **zprofile**: Currently empty (Homebrew shellenv lives in zshrc)
 
@@ -71,21 +65,6 @@ This is a personal dotfiles repository for macOS development environment configu
 - **Key Plugin**: nvim-tree (file explorer with `<C-h/j/k/l>` and `<A-h/j/k/l>` window navigation)
 - netrw is disabled in favor of nvim-tree
 
-### Vim Configuration
-- **vimrc**: Classic Vim configuration
-  - Leader key: `,` (comma)
-  - Pathogen plugin manager
-  - Molokai colorscheme
-  - 2-space indentation
-  - Tab mappings, FuzzyFinder, Ack integration
-  - Window navigation with `<C-h>` and `<C-l>`
-
-- **gvimrc**: GUI Vim (MacVim) settings
-  - Font: Menlo 14pt
-  - Dark background
-  - No toolbar/scrollbar
-  - UTF-8 encoding
-
 ### Terminal Configuration
 - **Ghostty** terminal emulator configured at `dotfiles/config/ghostty/config`
 - Option key mapped as Alt key for better keybinding support
@@ -96,14 +75,12 @@ This is a personal dotfiles repository for macOS development environment configu
 - Ruby: Homebrew keg-only Ruby at `/opt/homebrew/opt/ruby` (no version manager)
 - Java: Uses macOS `java_home` utility (bashrc, only when a JDK is installed)
 - Docker: Completions and binaries in `~/.docker/`
-- Rust: `~/.cargo/env` sourced by bash_profile, bashrc, and profile
 - Prompt: Starship (initialized in zshrc)
 
-## Common Aliases
+## Scripts
 
-- `start_postgres`: Launch PostgreSQL server from Homebrew installation
-- `update-all`: Script (not an alias) that runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
-- `claude-settings`: Script syncing `~/.claude/settings.json` with the repo copy (`status`/`diff`/`save`/`apply`); `/settings-sync` runs a guided per-setting review in Claude
+- `update-all`: Runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
+- `claude-settings`: Syncs `~/.claude/settings.json` with the repo copy (`status`/`diff`/`save`/`apply`); `/settings-sync` runs a guided per-setting review in Claude
 
 ## File Installation/Deployment
 
@@ -138,5 +115,4 @@ Backups are created with format: `filename.backup.YYYYMMDD_HHMMSS`
 ## Notes
 
 - `.DS_Store` files are gitignored
-- PostgreSQL is installed via Homebrew and requires manual starting (use `start_postgres` alias)
 - `claude/settings.json` is copied, never symlinked: Claude Code ignores `defaultMode: "auto"` when settings.json is a symlink. install.sh skips it; use `claude-settings apply` to install it.
