@@ -40,6 +40,14 @@ INTERACTIVE MODE:
     [o]verwrite  - Backup existing file (with timestamp) and create new symlink
     [q]uit       - Exit installation immediately
 
+    After the install pass, the script scans for symlinks that point into
+    this repo but whose source no longer exists (e.g. deleted by a git pull)
+    and prompts for each:
+
+    [r]emove     - Delete the dangling symlink
+    [s]kip       - Leave it in place
+    [q]uit       - Exit installation immediately
+
 EXAMPLES:
     ./install.sh                    # Install to \$HOME with interactive prompts
     ./install.sh --dry-run          # Preview what would be installed
@@ -153,7 +161,7 @@ prompt_conflict_resolution() {
         echo ""
         echo -e "Options: ${GREEN}[s]${NC}kip  ${BLUE}[d]${NC}iff  ${RED}[o]${NC}verwrite  ${YELLOW}[q]${NC}uit"
         # Read from FD 3 (terminal) not from stdin which is hijacked by the find loop
-        read -p "Choice: " -r choice_input <&3
+        read -p "Choice: " -r choice_input <&3 || { echo ""; echo -e "${YELLOW}No input available; skipping $target${NC}"; return 1; }
         # Take first character of input
         choice="${choice_input:0:1}"
         echo ""
@@ -181,6 +189,89 @@ prompt_conflict_resolution() {
                 continue
                 ;;
         esac
+    done
+}
+
+# Interactive prompt for removing a dangling symlink
+prompt_dangling_removal() {
+    local target="$1"
+    local dest="$(readlink "$target")"
+
+    while true; do
+        echo ""
+        echo -e "${YELLOW}⚠ Dangling symlink: source no longer exists in repo${NC}"
+        echo -e "  Target: $target"
+        echo -e "  Points to: $dest"
+        echo ""
+        echo -e "Options: ${RED}[r]${NC}emove  ${GREEN}[s]${NC}kip  ${YELLOW}[q]${NC}uit"
+        # Read from FD 3 (terminal) not from stdin which is hijacked by the find loop
+        read -p "Choice: " -r choice_input <&3 || { echo ""; echo -e "${YELLOW}No input available; leaving $target in place${NC}"; return 1; }
+        choice="${choice_input:0:1}"
+        echo ""
+
+        case $choice in
+            r|R)
+                if rm "$target"; then
+                    echo -e "${GREEN}✓ Removed: $target${NC}"
+                    return 0
+                else
+                    echo -e "${RED}Failed to remove: $target${NC}"
+                    return 1
+                fi
+                ;;
+            s|S)
+                echo -e "${YELLOW}Skipping: $target${NC}"
+                return 1
+                ;;
+            q|Q)
+                echo -e "${RED}Installation cancelled by user${NC}"
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}Invalid choice. Please try again.${NC}"
+                continue
+                ;;
+        esac
+    done
+}
+
+# Find symlinks in the managed directories that point into this repo but
+# whose source no longer exists (left behind when repo files are deleted)
+check_dangling_symlinks() {
+    local dangling=()
+    local link dest dir
+
+    while IFS= read -r -d '' link; do
+        dest="$(readlink "$link" 2>/dev/null)" || continue
+        # Resolve relative destinations against the link's directory
+        if [[ "$dest" != /* ]]; then
+            dest="$(cd "$(dirname "$link")" 2>/dev/null && pwd)/$dest" || continue
+        fi
+        # Reject destinations that escape the repo via "..", which would
+        # prefix-match $DOTFILES_DIR/ yet resolve outside it
+        if [[ "$dest" == "$DOTFILES_DIR"/* ]] && [[ "$dest" != *"/../"* ]] && [[ ! -e "$link" ]]; then
+            dangling+=("$link")
+        fi
+    done < <(
+        find "$TARGET_DIR" -maxdepth 1 -name ".*" -type l -print0 2>/dev/null
+        for dir in "$TARGET_DIR/.config" "$TARGET_DIR/.claude" "$TARGET_DIR/.codex" "$TARGET_DIR/.local/bin"; do
+            if [[ -d "$dir" ]]; then
+                find "$dir" -type l -print0 2>/dev/null
+            fi
+        done
+    )
+
+    if [[ ${#dangling[@]} -eq 0 ]]; then
+        echo -e "${GREEN}✓ No dangling symlinks${NC}"
+        return 0
+    fi
+
+    for link in "${dangling[@]}"; do
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "${RED}[DRY RUN] Dangling symlink: $link -> $(readlink "$link")${NC}"
+        else
+            prompt_dangling_removal "$link" || true
+        fi
     done
 }
 
@@ -288,7 +379,7 @@ echo ""
 
 # Open /dev/tty on file descriptor 3 for reading user input during the loop
 # This prevents the while-read loop from hijacking stdin
-exec 3</dev/tty 2>/dev/null || exec 3<&0
+{ exec 3</dev/tty; } 2>/dev/null || exec 3<&0
 
 # Process all files recursively
 while IFS= read -r -d '' file; do
@@ -307,6 +398,9 @@ while IFS= read -r -d '' file; do
 
     process_file "$rel_path"
 done < <(find "$DOTFILES_DIR" -type f -print0)
+
+echo ""
+check_dangling_symlinks
 
 echo ""
 if [[ "$DRY_RUN" == true ]]; then

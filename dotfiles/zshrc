@@ -2,7 +2,6 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
-export PATH="$HOME/.docker/bin:$PATH"
 
 # Prefer Homebrew Ruby over the macOS system Ruby when it's installed.
 # Ruby is keg-only, so Homebrew won't put it on the PATH automatically.
@@ -16,11 +15,8 @@ if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
   export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
 fi
 
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/jay/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
-# End of Docker CLI completions
 
 export COLORTERM=truecolor
 
