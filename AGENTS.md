@@ -119,10 +119,10 @@ their executable bit must be set on the source file in this repository.
   worktree lifecycle hooks and the status line script
   (`statusline-command.sh`, symlinked to `~/.claude/`). Treat these as tool
   configuration, not as repository-wide agent instructions.
-- `dotfiles/claude/settings.json` syncs with `~/.claude/settings.json` by
-  copying only (`claude-settings` script, `/settings-sync` command). Never
-  symlink it: Claude Code ignores `defaultMode: "auto"` through a symlink.
-  `install.sh` skips this file.
+- `dotfiles/claude/settings.json` is symlinked to `~/.claude/settings.json`
+  like every other config. Claude Code writes settings changes through the
+  symlink, so TUI toggles (`/model`, `/config`, theme) land as working-tree
+  edits in this repository.
 - `dotfiles/codex/AGENTS.md` holds user-level Codex guidance, symlinked to
   `~/.codex/AGENTS.md`. Like `dotfiles/claude/`, treat it as tool
   configuration, not repository-wide agent instructions.

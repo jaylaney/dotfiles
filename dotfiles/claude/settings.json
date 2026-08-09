@@ -2,10 +2,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "statusLine": {
-    "type": "command",
-    "command": "sh ~/.claude/statusline-command.sh"
-  },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "WorktreeCreate": [
       {
@@ -29,7 +26,10 @@
       }
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "sh ~/.claude/statusline-command.sh"
+  },
   "enabledPlugins": {
     "swift-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,

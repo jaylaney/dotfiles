@@ -18,7 +18,7 @@ This is a personal dotfiles repository for macOS development environment configu
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
 │   │   ├── CLAUDE.md  # User-level instructions (symlinked to ~/.claude/CLAUDE.md)
-│   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review, /machine-audit
+│   │   ├── commands/  # /commit, /push, /codex-review, /machine-audit
 │   │   ├── hooks/     # Worktree lifecycle hooks (symlinked to ~/.claude/hooks)
 │   │   └── statusline-command.sh  # Status line: cwd, git branch, worktree name
 │   ├── codex/         # Codex CLI config
@@ -79,7 +79,6 @@ This is a personal dotfiles repository for macOS development environment configu
 ## Scripts
 
 - `update-all`: Runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
-- `claude-settings`: Syncs `~/.claude/settings.json` with the repo copy (`status`/`diff`/`save`/`apply`); `/settings-sync` runs a guided per-setting review in Claude
 
 ## File Installation/Deployment
 
@@ -100,7 +99,7 @@ Use the `install.sh` script for non-destructive symlinking:
 - Files in subdirectories maintain structure (e.g., `dotfiles/config/nvim/init.lua` → `~/.config/nvim/init.lua`)
 - Automatically creates necessary parent directories
 - Symlinks already pointing to the correct location are left as-is
-- Auto-skips: `.git`, `.DS_Store`, `README.md`, `CLAUDE.md`, `install.sh`, `claude/settings.json`
+- Auto-skips: `.git`, `.DS_Store`, `README.md`, `CLAUDE.md`, `install.sh`
 - After the install pass, scans the managed directories for symlinks pointing into the repo whose source is gone and prompts [r]emove / [s]kip / [q]uit (`--dry-run` reports only)
 
 **Interactive conflict resolution:**
@@ -115,4 +114,4 @@ Backups are created with format: `filename.backup.YYYYMMDD_HHMMSS`
 ## Notes
 
 - `.DS_Store` files are gitignored
-- `claude/settings.json` is copied, never symlinked: Claude Code ignores `defaultMode: "auto"` when settings.json is a symlink. install.sh skips it; use `claude-settings apply` to install it.
+- `claude/settings.json` is symlinked like every other config. Claude Code writes settings changes (`/model`, `/config`, theme) straight through the symlink, so toggling a setting in the TUI dirties the repo working tree — commit or revert it deliberately.

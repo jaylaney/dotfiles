@@ -9,9 +9,9 @@ Personal macOS development environment configuration files with an interactive i
 - **Terminal**: Ghostty configuration
 - **Multiplexer**: tmux configuration
 - **Tool configs**: git, gh, opencode
-- **Claude Code**: settings, user-level `CLAUDE.md`, custom commands (`/commit`, `/push`, `/settings-sync`, `/codex-review`, `/machine-audit`), worktree lifecycle hooks, and status line script
+- **Claude Code**: settings, user-level `CLAUDE.md`, custom commands (`/commit`, `/push`, `/codex-review`, `/machine-audit`), worktree lifecycle hooks, and status line script
 - **Codex CLI**: user-level `AGENTS.md` guidance
-- **Scripts**: `update-all` and `claude-settings`, installed to `~/.local/bin`
+- **Scripts**: `update-all`, installed to `~/.local/bin`
 - **Development tools**: Homebrew Ruby integration
 
 ## Features
@@ -85,7 +85,7 @@ The installation script:
 │   ├── tmux.conf
 │   ├── claude/        # Claude Code settings, commands, and hooks
 │   │   ├── CLAUDE.md  # User-level instructions (symlinked to ~/.claude/CLAUDE.md)
-│   │   ├── commands/  # /commit, /push, /settings-sync, /codex-review, /machine-audit
+│   │   ├── commands/  # /commit, /push, /codex-review, /machine-audit
 │   │   ├── hooks/     # Worktree lifecycle hooks
 │   │   └── statusline-command.sh  # Status line: cwd, git branch, worktree name
 │   ├── codex/         # Codex CLI config
@@ -106,15 +106,14 @@ The installation script:
 Installed to `~/.local/bin` via symlinks from `dotfiles/local/bin/`:
 
 - **`update-all`** - Runs `claude update`, `brew upgrade`, `brew cleanup`, and `npm update -g`, continuing past failures and printing a ✓/✗ summary
-- **`claude-settings`** - Syncs `~/.claude/settings.json` with the repo copy (`status`/`diff`/`save`/`apply`); the `/settings-sync` Claude Code command runs a guided per-setting review
 
-Tests for both live in `tests/` and can be run directly (e.g., `./tests/update-all-test.sh`).
+Tests live in `tests/` and can be run directly (e.g., `./tests/update-all-test.sh`).
 
 ## Notes
 
 - Backups are saved with format: `filename.backup.YYYYMMDD_HHMMSS`
-- The script automatically skips: `.git`, `.DS_Store`, documentation files, and `claude/settings.json`
-- `claude/settings.json` is copied, never symlinked — Claude Code ignores `defaultMode: "auto"` when settings.json is a symlink. Use `claude-settings apply` to install it
+- The script automatically skips: `.git`, `.DS_Store`, and documentation files
+- `claude/settings.json` is symlinked like every other config — Claude Code writes settings changes through the symlink, so TUI toggles (`/model`, `/config`, theme) show up as working-tree edits here
 - See `CLAUDE.md` for detailed architecture and configuration information
 
 ## License
