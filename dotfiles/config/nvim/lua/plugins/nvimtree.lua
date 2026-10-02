@@ -1,11 +1,19 @@
-return {
-  "nvim-tree/nvim-tree.lua",
-  version = "*",
-  lazy = false,
-  dependencies = {
-    "nvim-tree/nvim-web-devicons",
+vim.pack.add({
+  { src = "https://github.com/nvim-tree/nvim-tree.lua", version = vim.version.range("*") },
+  "https://github.com/nvim-tree/nvim-web-devicons",
+})
+
+require("nvim-tree").setup({
+  sort = {
+    sorter = "case_sensitive",
   },
-  config = function()
-    require("nvim-tree").setup {}
-  end,
-}
+  view = {
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})

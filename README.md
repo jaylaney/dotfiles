@@ -5,7 +5,7 @@ Personal macOS development environment configuration files with an interactive i
 ## What's Included
 
 - **Shell configurations**: zsh (primary, with Starship prompt), bash (legacy)
-- **Editor configs**: Neovim (with lazy.nvim)
+- **Editor configs**: Neovim (with built-in vim.pack)
 - **Terminal**: Ghostty configuration
 - **Multiplexer**: tmux configuration
 - **Tool configs**: git, gh, opencode

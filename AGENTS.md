@@ -99,9 +99,11 @@ their executable bit must be set on the source file in this repository.
 
 ### Editors
 
-- Neovim bootstraps `lazy.nvim` from
-  `dotfiles/config/nvim/lua/config/lazy.lua`.
-- Plugins are declared under `dotfiles/config/nvim/lua/plugins/`.
+- Neovim plugins are managed by the built-in `vim.pack` (Neovim 0.12+). Each
+  file under `dotfiles/config/nvim/lua/plugins/` calls `vim.pack.add` and is
+  required from `init.lua`.
+- The lockfile `dotfiles/config/nvim/nvim-pack-lock.json` is tracked and
+  symlinked; `vim.pack.update()` writes through the symlink and dirties the repo.
 - The leader is Space and the local leader is Backslash.
 - `nvim-tree` replaces netrw. Window navigation uses Control or Option with
   `h`, `j`, `k`, and `l`.

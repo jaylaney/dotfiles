@@ -58,7 +58,7 @@ This is a personal dotfiles repository for macOS development environment configu
 - **zprofile**: Currently empty (Homebrew shellenv lives in zshrc)
 
 ### Neovim Configuration (`dotfiles/config/nvim/`)
-- **Plugin Manager**: lazy.nvim (bootstrapped from `lua/config/lazy.lua`, required by init.lua)
+- **Plugin Manager**: Neovim's built-in `vim.pack` (Neovim 0.12+). Each plugin file in `lua/plugins/` calls `vim.pack.add` and is required from init.lua. The lockfile `nvim-pack-lock.json` is tracked and symlinked; vim.pack writes through the symlink, so `vim.pack.update()` dirties the repo — commit it deliberately
 - **Leader Key**: Space (`<leader>` = ` `)
 - **Local Leader**: Backslash (`<localleader>` = `\`)
 - **Plugin Structure**: Modular - plugins defined in `lua/plugins/*.lua`

@@ -1,30 +1,14 @@
--- disable netrw at the very start of your init.lua
+-- Disable netrw at the very start; nvim-tree replaces it
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-require("config.lazy")
+-- Set leaders before anything defines mappings
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
--- optionally enable 24-bit colour
 vim.opt.termguicolors = true
 
--- empty setup using defaults
-require("nvim-tree").setup()
-
--- OR setup with some options
-require("nvim-tree").setup({
-  sort = {
-    sorter = "case_sensitive",
-  },
-  view = {
-    width = 30,
-  },
-  renderer = {
-    group_empty = true,
-  },
-  filters = {
-    dotfiles = true,
-  },
-})
+require("plugins.nvimtree")
 
 vim.keymap.set('n', '<C-h>', '<C-w>h')
 vim.keymap.set('n', '<C-j>', '<C-w>j')
