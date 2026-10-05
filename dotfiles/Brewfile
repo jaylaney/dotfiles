@@ -1,0 +1,27 @@
+brew "ack"
+brew "python@3.14"
+brew "awscli"
+brew "bun"
+brew "gh"
+brew "mole"
+brew "neovim"
+brew "node"
+brew "ripgrep"
+brew "starship"
+brew "tmux"
+brew "uv"
+brew "yt-dlp"
+
+tap "can1357/tap"
+brew "can1357/tap/omp", trusted: true
+
+# Model Context Protocol server for Xcode project workflows
+tap "getsentry/xcodebuildmcp", trusted: true
+brew "getsentry/xcodebuildmcp/mobilebuildmcp"
+
+cask "font-victor-mono-nerd-font"
+cask "font-zed-mono-nerd-font"
+
+cask "highball"
+
+npm "@openai/codex"
