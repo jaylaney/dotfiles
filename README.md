@@ -14,6 +14,39 @@ Personal macOS development environment configuration files with an interactive i
 - **Scripts**: `update-all`, installed to `~/.local/bin`
 - **Development tools**: Homebrew Ruby integration
 
+## Current Configuration
+
+### Shells
+
+- `dotfiles/zshrc` is the primary interactive configuration. It initializes
+  Apple Silicon Homebrew, sets Neovim as the editor, adds Homebrew Ruby,
+  Ruby gem binaries, `~/.local/bin`, and `~/.openclaw/bin` to `PATH`, initializes
+  completions and Starship, and uses Emacs-style key bindings. It loads the
+  configured OpenClaw completion file when present.
+- `dotfiles/bash_profile` and `dotfiles/bashrc` retain legacy Bash setup for
+  Homebrew Ruby and Java detection. `dotfiles/profile` and `dotfiles/zprofile`
+  are currently empty.
+
+### Editors
+
+- Neovim uses built-in `vim.pack` (Neovim 0.12+). Plugin modules under
+  `dotfiles/config/nvim/lua/plugins/` call `vim.pack.add` and are required from
+  `init.lua`.
+- The leader is Space and the local leader is Backslash. `nvim-tree` replaces
+  netrw; window navigation uses Control or Option with `h`, `j`, `k`, and `l`.
+- tmux configuration remains in `dotfiles/tmux.conf`.
+
+### Terminal and Tooling
+
+- Ghostty uses VictorMono Nerd Font Mono, light/dark themes, Option-as-Alt,
+  `xterm-256color`, and a Shift-Enter escape binding.
+- `dotfiles/config/gh/config.yml` configures GitHub CLI defaults and the `gh co`
+  alias; `dotfiles/config/git/ignore` globally ignores Claude local settings.
+- `dotfiles/config/opencode/opencode.jsonc` enables the Superpowers plugin.
+- `dotfiles/claude/` contains Claude-specific commands, settings, worktree
+  lifecycle hooks, and the status line script. `dotfiles/codex/AGENTS.md` holds
+  user-level Codex guidance. Both are installable tool configuration.
+
 ## Features
 
 - 🔄 **Non-destructive symlinking** - Symlinks dotfiles from this repo to your home directory

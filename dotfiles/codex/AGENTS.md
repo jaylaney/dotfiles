@@ -9,6 +9,7 @@ Core principle: coding runs in subagents; the primary agent orchestrates, review
 - For implementation, bug fixes, refactors, tests, and substantive code review, make subagent delegation the default.
 - The primary agent decomposes work, selects models and reasoning effort, writes bounded briefs, resolves conflicting findings, inspects diffs, and runs final verification.
 - The primary agent may directly handle read-only investigation, planning, user communication, small documentation/configuration edits, and integration-only corrections.
+- Requests for review or recommendations authorize read-only investigation and reporting unless the user has already authorized edits or execution. Findings do not authorize implementation.
 - If subagent tools are unavailable or work cannot be isolated safely, continue in the primary agent and state the reason.
 - Delegate independent work in parallel only when scopes do not overlap. Do not assign multiple writers to the same files.
 - The primary owns the concurrency budget. Subagents may spawn further agents only when their brief explicitly authorizes delegation and allocates capacity within the current runtime limit. Keep capacity available for required independent review.
@@ -50,12 +51,14 @@ Use this tier only when the brief is fully specified and the work is primarily t
 ## Routing invariants
 
 - Subagents must use a model capability tier no higher than the agent that spawns them. This applies to reviewers and nested delegation, so the originating primary agent's tier is a ceiling for the entire delegation tree. This ceiling takes precedence over the default top-tier, escalation, and fallback routes. Reasoning effort remains independently selected for each role.
+- Establish the originating model's capability ceiling from explicit runtime information and reliable capability descriptions. If its identity or tier ordering cannot be established, prefer supported parent-model inheritance and disclose the unresolved ceiling rather than guessing a ranking. The reasoning-effort limits still apply. If safe inheritance is unavailable, continue in the primary agent and report the routing limitation.
 - Select the model and reasoning effort independently for each subagent. Except when deliberately inheriting both, set them explicitly using values supported by the current tool.
 - Default to clean context and a bounded brief. When the tool exposes `fork_turns`, use `"none"` or a deliberately bounded positive turn count for explicit model and effort selection. Use `"all"` only for deliberate inheritance of the parent model and effort, subject to the current tool schema.
 - Do not pin one model globally for every subagent.
 - Route based on the output required from the subagent. A critical component does not automatically require the top tier for mechanical work, while adversarial counterexample construction does.
 - Never economize on both sides of a critical implementer/reviewer pair. Keep the independent reviewer on the strongest route permitted by the originating agent ceiling, and disclose when that ceiling prevents the usual top-tier review. Preserve reviewer independence and the required verification.
 - A reviewer must be independent. Do not ask an implementer to approve its own work.
+- Require a final whole-branch review for changes spanning critical contracts or interacting components when focused reviews cannot establish their combined correctness, and whenever the user or closer repository guidance requires it. Bounded changes may use focused independent review.
 - For a required final whole-branch review, use a fresh read-only agent with clean context. Give it the base/head refs, repository guidance, and accepted contract in a neutral brief; let it inspect the whole branch without inheriting the implementer report, prior finding list, or task-scoped conclusions.
 - If a requested tier or reasoning effort is unavailable, prefer the nearest suitable route within the originating agent ceiling and disclose the fallback or capability limitation. Do not silently downgrade or exceed the ceiling.
 - Do not spawn a subagent merely to repeat work already completed by the primary agent or another subagent.
@@ -68,7 +71,7 @@ Every subagent brief should include:
 - Files or directories in scope and explicit exclusions.
 - The assigned checkout/worktree, file ownership, and any build or result paths needed to avoid interference.
 - Relevant constraints, invariants, approved design decisions, and the spawning agent's model capability ceiling.
-- Commands or tests the subagent must run.
+- Required and permitted validation, including any prohibition on builds, tests, probes, or edits. Explicitly state when a read-only task permits no execution beyond inspection.
 - Evidence the subagent must return, such as file references, failing scenarios, test output, or a concise diff summary.
 - Whether the subagent may edit files or must remain read-only.
 
@@ -82,3 +85,4 @@ File ownership alone does not isolate shared Git or build state. The primary coo
 - The primary agent reviews the actual diff and validates findings against the repository.
 - Run fresh, relevant verification before claiming work is correct, complete, fixed, or passing.
 - Report unresolved reviewer findings, skipped verification, unavailable models, and fallback routing explicitly.
+- Once the authorized work is complete and required reviews and relevant checks pass, stop. Repeat review or verification only after changes, failures, or new evidence justify it.

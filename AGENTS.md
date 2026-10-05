@@ -85,49 +85,27 @@ Parent directories are created as needed. Existing symlinks to the correct
 absolute source are left unchanged. Because installed commands remain symlinks,
 their executable bit must be set on the source file in this repository.
 
-## Current Configuration
+Installed symlinks read directly from the checkout that supplied them. Editing
+source files or switching branches in that checkout can immediately change the
+live configuration without rerunning the installer. Some applications write
+through these symlinks, so settings changes can also become repository edits.
 
-### Shells
+## Configuration Notes
 
-- `dotfiles/zshrc` is the primary interactive configuration. It initializes
-  Apple Silicon Homebrew, sets Neovim as the editor, adds Homebrew Ruby,
-  Ruby gem binaries, and `~/.local/bin` to `PATH`, initializes shell
-  completions and Starship, and uses Emacs-style key bindings.
-- `dotfiles/bash_profile` and `dotfiles/bashrc` retain legacy Bash setup for
-  Homebrew Ruby and Java detection; `dotfiles/profile` is currently empty.
-- `dotfiles/zprofile` is currently empty.
+See [README.md](README.md#current-configuration) for the configuration inventory
+and [prerequisites](README.md#prerequisites). Inspect the relevant source files
+when changing behavior.
 
-### Editors
-
-- Neovim plugins are managed by the built-in `vim.pack` (Neovim 0.12+). Each
-  file under `dotfiles/config/nvim/lua/plugins/` calls `vim.pack.add` and is
-  required from `init.lua`.
+- Neovim uses built-in `vim.pack` (Neovim 0.12+). Plugin modules under
+  `dotfiles/config/nvim/lua/plugins/` are required from `init.lua`.
 - The lockfile `dotfiles/config/nvim/nvim-pack-lock.json` is tracked and
   symlinked; `vim.pack.update()` writes through the symlink and dirties the repo.
-- The leader is Space and the local leader is Backslash.
-- `nvim-tree` replaces netrw. Window navigation uses Control or Option with
-  `h`, `j`, `k`, and `l`.
-- tmux configuration remains in its top-level file under `dotfiles/`.
-
-### Terminal and Tooling
-
-- Ghostty uses SF Mono, light/dark themes, Option-as-Alt, `xterm-256color`, and
-  a Shift-Enter escape binding.
-- `dotfiles/config/gh/config.yml` configures GitHub CLI defaults and the
-  `gh co` alias.
 - `dotfiles/config/git/ignore` globally ignores Claude local settings files.
-- `dotfiles/config/opencode/opencode.jsonc` enables the Superpowers plugin.
-- `dotfiles/claude/` contains Claude-specific commands and settings, including
-  worktree lifecycle hooks and the status line script
-  (`statusline-command.sh`, symlinked to `~/.claude/`). Treat these as tool
-  configuration, not as repository-wide agent instructions.
 - `dotfiles/claude/settings.json` is symlinked to `~/.claude/settings.json`
-  like every other config. Claude Code writes settings changes through the
-  symlink, so TUI toggles (`/model`, `/config`, theme) land as working-tree
-  edits in this repository.
-- `dotfiles/codex/AGENTS.md` holds user-level Codex guidance, symlinked to
-  `~/.codex/AGENTS.md`. Like `dotfiles/claude/`, treat it as tool
-  configuration, not repository-wide agent instructions.
+  and Claude Code writes settings changes through it, including TUI toggles.
+- `dotfiles/claude/` and `dotfiles/codex/AGENTS.md` are installable tool
+  configuration, not repository-wide agent instructions. The latter is
+  symlinked to `~/.codex/AGENTS.md` as user-level Codex guidance.
 
 ## Working Rules
 
@@ -166,9 +144,16 @@ git diff --check
 
 - Run `bash -n` and `shellcheck` on every changed Bash script when ShellCheck is
   available.
+- For Zsh configuration changes, use `zsh -n dotfiles/zshrc` (or the changed
+  Zsh file) to check syntax. Do not source it merely to validate syntax:
+  sourcing executes Homebrew, Starship, and completion setup.
 - For installer changes, use a temporary target and verify the reported source
   and destination paths. Exercise interactive conflict handling only in an
   isolated temporary target.
+- For installer changes, run `bash tests/install-test.sh`; it tests
+  dangling-symlink detection and interactive removal in temporary targets.
+- For `update-all` changes, run `bash tests/update-all-test.sh`; it uses command
+  stubs and does not perform real upgrades.
 - For command-orchestration scripts, prefer deterministic `PATH` stubs over
   real package upgrades. Include a failure before a later successful command so
   tests prove execution continues, the complete summary is printed, and the
@@ -177,12 +162,9 @@ git diff --check
   shell, package-manager, or assistant configuration unless the user asks for
   an integration test.
 
-## Design Spec: `update-all`
+## Relevant Design Specs
 
-`docs/superpowers/specs/2026-07-24-update-all-design.md` specifies the
-`update-all` command, implemented at `dotfiles/local/bin/update-all` with
-stub-based tests at `tests/update-all-test.sh`. The design calls for
-sequential Claude, Homebrew, cleanup, and global npm update steps; streaming
-terminal output; continuation after individual failures; a final per-step
-summary; and an aggregate success/failure exit code. The implementation and
-tests match that specification.
+- For update orchestration, use the [update-all design](docs/superpowers/specs/2026-07-24-update-all-design.md),
+  [implementation](dotfiles/local/bin/update-all), and [stub-based tests](tests/update-all-test.sh).
+- For installer cleanup, use the [dangling-symlink detection design](docs/superpowers/specs/2026-08-04-dangling-symlink-detection-design.md),
+  [installer](install.sh), and [temporary-target tests](tests/install-test.sh).
