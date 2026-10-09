@@ -16,6 +16,12 @@ if [ -d "/opt/homebrew/opt/ruby/bin" ]; then
   export CPPFLAGS="-I/opt/homebrew/opt/ruby/include"
 fi
 
+# Rust via Homebrew's rustup formula, which is keg-only (it conflicts with the
+# `rust` formula), so Homebrew does not put its proxies on the PATH.
+if [ -d "/opt/homebrew/opt/rustup/bin" ]; then
+  export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+fi
+
 autoload -Uz compinit
 compinit
 

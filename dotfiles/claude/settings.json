@@ -38,7 +38,16 @@
     "commit-commands@claude-plugins-official": false,
     "frontend-design@claude-plugins-official": false,
     "playwright@claude-plugins-official": false,
-    "github@claude-plugins-official": true
+    "github@claude-plugins-official": true,
+    "1password@1password": true
+  },
+  "extraKnownMarketplaces": {
+    "1password": {
+      "source": {
+        "source": "github",
+        "repo": "1Password/1password-claude-plugin"
+      }
+    }
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
@@ -47,7 +56,7 @@
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "high"
     }
   },
   "tui": "fullscreen",
