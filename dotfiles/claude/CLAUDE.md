@@ -11,3 +11,10 @@
 - Mid tier: prose-spec implementation, multi-file integration, per-task reviews. Cheapest tier: only when the brief already contains the code to write. Before dropping a tier, try lowering effort on mechanical stages first.
 - Two caveats no tier fixes: cheap models execute a flawed brief faithfully rather than pushing back, so the brief must restate every project invariant it touches; and no tier fixes a wrong premise — verify premises against ground truth (signed artifacts, live probes, real behavior), not documents about it. Personally re-read every cheapest-tier diff — plausible-but-wrong code that survives skimming is that tier's signature failure.
 - Briefs for Opus 5 / Sonnet 5 subagents: (1) do **not** instruct them to verify or double-check their work — they self-verify unprompted and the instruction causes over-verification; (2) add a scope-discipline line ("deliver at the scope of the brief; don't widen it"); (3) if the agent can spawn subagents, cap that explicitly; (4) reviewer briefs at any tier must not carry severity filters — ask for every finding with confidence + severity and filter at adjudication.
+
+## PR reviews
+
+- **Standing authorization: when a review targets a GitHub PR** (`/code-review <PR>`, `/codex-review <PR>`, or "review PR #N"), **post the findings to the PR right away, without asking.** For `/code-review`, pass `--comment`. Otherwise follow the posting steps in `/codex-review`: one review with `event: COMMENT` and an inline comment per finding.
+- Post only findings that survived verification. Label uncertain ones as uncertain, and never post false positives. Never submit `APPROVE` or `REQUEST_CHANGES`. That verdict stays mine.
+- Reviews of a local branch or working tree with no PR are reported in the terminal only.
+- After posting, give me the review's URL.

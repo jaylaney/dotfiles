@@ -1,6 +1,6 @@
 ---
 description: Adversarial code review via codex CLI (current branch or a PR). Manual only — never invoke proactively; run solely when the user explicitly types /codex-review.
-allowed-tools: Bash(command -v:*), Bash(git:*), Bash(gh pr view:*), Bash(mktemp:*), Bash(sed:*), Agent
+allowed-tools: Bash(command -v:*), Bash(git:*), Bash(gh pr view:*), Bash(gh api:*), Bash(mktemp:*), Bash(sed:*), Agent
 ---
 
 Only run this command when the user explicitly invoked `/codex-review`. If you loaded it on your own initiative — because a code review seemed useful or was requested in general terms — stop and ask the user whether they want codex involved; a plain "review this" is not an invocation of this command.
@@ -18,7 +18,7 @@ Preconditions — stop with a single clear sentence if either fails:
 2. CURRENT = `git branch --show-current`.
    - CURRENT == BASE → MODE=`--uncommitted`. If `git status --porcelain` is empty: "Nothing to review — working tree is clean and you're on BASE." Stop.
    - Otherwise → MODE=`--base BASE`. If `git rev-list --count BASE..HEAD` is 0 and `git status --porcelain` is empty: nothing to review, stop. If `git show-ref --verify --quiet refs/heads/BASE` fails, use `--base origin/BASE` instead.
-3. WORKDIR=REPO_ROOT; CLEANUP="true" (nothing to clean up).
+3. WORKDIR=REPO_ROOT; CLEANUP="true" (nothing to clean up); PR=none.
 
 **Argument N — review PR #N:**
 1. `gh pr view N --json baseRefName,title,url` — on any failure, show gh's error verbatim and stop. BASEREF = baseRefName.
@@ -28,15 +28,15 @@ Preconditions — stop with a single clear sentence if either fails:
       && WORKDIR=$(mktemp -d "${TMPDIR:-/tmp}/codex-review-prN.XXXXXX")/wt \
       && git worktree add --detach "$WORKDIR" refs/codex-review/prN && echo "$WORKDIR"
 
-3. MODE=`--base origin/BASEREF` — the bare BASEREF often does not resolve locally after a fetch; origin/BASEREF always does.
+3. PR=N. MODE=`--base origin/BASEREF` — the bare BASEREF often does not resolve locally after a fetch; origin/BASEREF always does.
 4. CLEANUP (three commands; PARENT is WORKDIR without the trailing `/wt`): `git -C "REPO_ROOT" worktree remove --force "WORKDIR"; git -C "REPO_ROOT" update-ref -d refs/codex-review/prN; rm -rf "PARENT"`.
 
 # Phase 2 — spawn the reviewer subagent
 
-Spawn ONE general-purpose subagent in the background with the prompt below, substituting WORKDIR, MODE, CLEANUP, and TARGET (a one-line description like "branch fix-parser vs main in ~/Development/Notes" or "PR #123: <title>"). Then tell the user the review is running in the background and the verified report will arrive when it finishes. Do not block, poll, or run the review yourself.
+Spawn ONE general-purpose subagent in the background with the prompt below, substituting WORKDIR, MODE, CLEANUP, PR, and TARGET (a one-line description like "branch fix-parser vs main in ~/Development/Notes" or "PR #123: <title>"). Then tell the user the review is running in the background and the verified report will arrive when it finishes. Do not block, poll, or run the review yourself.
 
 ---- SUBAGENT PROMPT START ----
-You are an adversarial code-review pipeline. Repo copy to review: WORKDIR. Target: TARGET.
+You are an adversarial code-review pipeline. Repo copy to review: WORKDIR. Target: TARGET. PR number: PR.
 
 Step 1 — run codex, waiting by blocking rather than by ending your turn (a subagent that stops after launching a background job may never be re-invoked when it exits). Never add --dangerously-* flags or any workspace-write sandbox override — codex must stay in its default read-only sandbox. Do not append a custom prompt argument: codex rejects a prompt combined with --base/--uncommitted; its built-in review instructions apply.
 
@@ -61,11 +61,19 @@ Step 3 — verify every finding independently. For each finding, Read the cited 
 - UNCERTAIN — you cannot disprove it; note the caveat.
 If codex plainly said there are no findings, verify nothing and report that.
 
+Step 3b — post to the PR (skip if PR is none, or if codex failed in Step 2). The user has given standing authorization to post — do not ask. Post CONFIRMED and UNCERTAIN findings only, never false positives:
+- Write a JSON payload to a mktemp file: `{"commit_id": "<git -C WORKDIR rev-parse HEAD>", "event": "COMMENT", "body": "Codex adversarial review — N confirmed, M uncertain (verified by Claude).", "comments": [{"path": "<repo-relative path>", "line": <line>, "side": "RIGHT", "body": "**Confirmed** — issue. Why it is real."}, ...]}`. Prefix uncertain findings' bodies with **Uncertain** and include the caveat. Never use event APPROVE or REQUEST_CHANGES.
+- If there are no findings to post, post just the body saying the review found no confirmed issues.
+- Run `cd "WORKDIR" && gh api --method POST "repos/{owner}/{repo}/pulls/PR/reviews" --input <payload file>` and note the returned `html_url`.
+- If GitHub rejects it with 422 (a cited line is not part of the diff), move those findings into the review body as `file:line — issue` bullets and retry once. On any other failure, put gh's error in your report and do not retry.
+- Delete the payload file.
+
 Step 4 — cleanup, always, even after failures: run CLEANUP, then `rm -f "$OUT" "$ERR" "$DONE"`. If CLEANUP fails, say so in your report and include the leftover path.
 
 Step 5 — return exactly this as your final message (omit empty sections):
 
 ## Codex adversarial review — TARGET
+Posted to PR: <html_url, or the posting error> (omit this line when PR is none)
 **Confirmed (N)**
 - `file:line` — issue — one sentence on why it is real
 **Uncertain (N)**
