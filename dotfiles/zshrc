@@ -29,6 +29,18 @@ export COLORTERM=truecolor
 
 bindkey -e  # Use emacs key bindings (includes Ctrl-R for history search)
 
+# Clear mouse reporting left enabled by disconnected terminal apps.
+autoload -Uz add-zsh-hook
+
+_clear_stale_mouse_reporting() {
+  if [[ -t 1 ]]; then
+    printf '\e[?9;1000;1002;1003;1005;1006;1015;1016l'
+  fi
+  return 0
+}
+
+add-zsh-hook precmd _clear_stale_mouse_reporting
+
 eval "$(starship init zsh)"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.openclaw/bin"
