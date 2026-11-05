@@ -29,17 +29,20 @@ export COLORTERM=truecolor
 
 bindkey -e  # Use emacs key bindings (includes Ctrl-R for history search)
 
-# Clear mouse reporting left enabled by disconnected terminal apps.
+# Clear mouse reporting and extended keyboard modes left enabled by
+# terminal apps that exited uncleanly (e.g. SSH sessions dropped on sleep).
 autoload -Uz add-zsh-hook
 
-_clear_stale_mouse_reporting() {
+_reset_stale_terminal_modes() {
   if [[ -t 1 ]]; then
-    printf '\e[?9;1000;1002;1003;1005;1006;1015;1016l'
+    printf '\e[?9;1000;1002;1003;1005;1006;1015;1016l'  # mouse reporting off
+    printf '\e[>4;0m'                                    # xterm modifyOtherKeys off
+    printf '\e[=0;1u'                                    # kitty keyboard protocol flags cleared
   fi
   return 0
 }
 
-add-zsh-hook precmd _clear_stale_mouse_reporting
+add-zsh-hook precmd _reset_stale_terminal_modes
 
 eval "$(starship init zsh)"
 export PATH="$HOME/.local/bin:$PATH"
